@@ -1,0 +1,1239 @@
+---
+openapi: 3.0.1
+info:
+  title: CYR3CON_NETWORKS
+  version: '530'
+servers:
+- url: https://dev.apigargoyle.com
+security:
+- userId: []
+  apiKey: []
+paths:
+  "/v1/account/login":
+    post:
+      tags:
+      - NETWORKS
+      description: authorizes user and returns apiKey required in all other endpoints
+      operationId: Login
+      parameters:
+      - name: userId
+        in: header
+        description: User ID for the cyr3con
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: header
+        description: Password for the cyr3con.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LoginResponse"
+      security: []
+  "/v1/account/reset-password":
+    post:
+      tags:
+      - NETWORKS
+      operationId: Reset Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/InitResetPasswordRequestDto"
+        required: true
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/change-password":
+    post:
+      tags:
+      - NETWORKS
+      operationId: Change Password
+      parameters:
+      - name: oldPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: newPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: confirmPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/logout":
+    post:
+      tags:
+      - NETWORKS
+      operationId: Logout
+      parameters:
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LogoutStatus"
+      security: []
+  "/v1/analysis/forums/statistics":
+    get:
+      tags:
+      - NETWORKS
+      description: Get a list of statistics about forums
+      operationId: Forum Statistics
+      parameters:
+      - name: forumsId
+        in: query
+        description: Id of the forum. Allows “=” behavior
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: oldForumsId
+        in: query
+        description: Website ID
+        required: false
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseForumPostsTopicsStats"
+      security: []
+  "/v1/analysis/marketplaces/statistics":
+    get:
+      tags:
+      - NETWORKS
+      description: Get a list of marketplace statistics for different marketplaces
+      operationId: Marketplace Statistics
+      parameters:
+      - name: marketPlaceId
+        in: query
+        description: marketPlaceId of the marketplace
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: oldMarketPlaceId
+        in: query
+        description: Website Id.
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseMarketplaceStatistics"
+      security: []
+  "/v1/analysis/users/activities":
+    get:
+      tags:
+      - NETWORKS
+      description: Get a list of statistics about users and the forums in which they
+        are posting
+      operationId: User Activity
+      parameters:
+      - name: uid
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: oldUid
+        in: query
+        description: Uid of the Exploit DB Data.
+        required: false
+        schema:
+          type: string
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseForumUsersStats"
+      security: []
+  "/v1/analysis/users/posts":
+    get:
+      tags:
+      - NETWORKS
+      description: To get a list of Users posts
+      operationId: User Posts
+      parameters:
+      - name: uid
+        in: query
+        description: Uid of Exploit db data.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseUserPost"
+      security: []
+  "/v1/networks/users/{userId}":
+    get:
+      tags:
+      - NETWORKS
+      operationId: getUserNetworks
+      parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: threshold
+        in: query
+        description: Number of social connections of a given user.
+        required: false
+        schema:
+          type: integer
+          default: 3
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseUserNetworkModel"
+      security: []
+  "/v1/networks/users/{userId}/forums":
+    get:
+      tags:
+      - NETWORKS
+      description: Forum net API
+      operationId: getUserForumsNetworks
+      parameters:
+      - name: userId
+        in: path
+        description: Uid of Exploit db data.
+        required: true
+        schema:
+          type: string
+      - name: threshold
+        in: query
+        description: Number of social connections of a given user.
+        required: false
+        schema:
+          type: integer
+          default: 3
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseGenerateForumNetModel"
+      security: []
+  "/v1/networks/users/{userId}/marketplaces":
+    get:
+      tags:
+      - NETWORKS
+      operationId: getUserMarketsNetworks
+      parameters:
+      - name: userId
+        in: path
+        description: User Id.
+        required: true
+        schema:
+          type: string
+      - name: threshold
+        in: query
+        description: Number of social connections of a given user.
+        required: false
+        schema:
+          type: integer
+          default: 3
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseMarketNetworkModel"
+      security: []
+  "/v1/networks/websites/{websiteId}":
+    get:
+      tags:
+      - NETWORKS
+      description: Get a social network of marketplaces and Forums on which various
+        users are active. The indicator in the response indicates whether the Id is
+        a marketplace or a forum.
+      operationId: getWebsiteNetwork
+      parameters:
+      - name: websiteId
+        in: path
+        description: Id of the website.
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseForumMarketNet"
+      security: []
+  "/v1/networks/websites/{websiteId}/users/{userId}":
+    get:
+      tags:
+      - NETWORKS
+      description: Generate a social network of users who are connected by a node
+        if their activity is seen in more common topics than the given threshold.
+      operationId: getWebsiteUserNetwork
+      parameters:
+      - name: websiteId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: recordedStartDate
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: recordedEndDate
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseUserSocialNetworkModel"
+      security: []
+  "/v1/vendor-products":
+    get:
+      tags:
+      - NETWORKS
+      description: Get a list of vendor product information given a vendorId.
+      operationId: Vendor Products
+      parameters:
+      - name: uid
+        in: query
+        description: fetch specific records based on given uid.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: oldUid
+        in: query
+        description: fetch specific records based on given old uid.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: getCount
+        in: query
+        description: get result count.
+        required: false
+        schema:
+          type: boolean
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseVendorProducts"
+      security: []
+components:
+  schemas:
+    InitResetPasswordRequestDto:
+      required:
+      - userId
+      type: object
+      properties:
+        userId:
+          type: string
+          format: string
+    AccountActionStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LogoutStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LoginResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          format: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        userId:
+          type: string
+          format: string
+        roles:
+          type: array
+          format: array
+          items:
+            type: string
+        uiFeatures:
+          type: array
+          format: array
+          items:
+            type: string
+        apiKey:
+          type: string
+          format: string(uuid)
+        apiKeyCreatedOn:
+          type: string
+          format: string(date-time)
+        apiKeyExpiresOn:
+          type: string
+          format: string(date-time)
+        changePassword:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        twoFactor:
+          type: boolean
+          format: boolean
+        lastActivityTime:
+          type: string
+          format: string(date-time)
+        privacyPolicyAcceptanceRequired:
+          type: boolean
+          format: boolean
+    GenericResponseVendorProducts:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/VendorProducts"
+        count:
+          type: integer
+          format: integer(int64)
+    SellingPrice:
+      type: object
+      properties:
+        sellingPriceUsd:
+          type: number
+          description: price in USD price at which this item was sold
+          format: 'number :: price in USD price at which this item was sold'
+      description: List of JSON with price in USDat which each item was sold
+    VendorProducts:
+      type: object
+      properties:
+        uid:
+          type: integer
+          description: Id of the vendor
+          format: 'integer(int32) :: Id of the vendor'
+        itemDescription:
+          type: string
+          description: Description of this item
+          format: 'string :: Description of this item'
+        itemAddedDate:
+          type: string
+          description: Date when item was listed by Vendor
+          format: 'string(date) :: Date when item was listed by Vendor'
+        itemName:
+          type: string
+          description: Name of the item as listed
+          format: 'string :: Name of the item as listed'
+        createdDate:
+          type: string
+          description: Date when the item post was created
+          format: 'string(date) :: Date when the item post was created'
+        sellingPriceUsd:
+          type: number
+          description: Selling price of item in USD
+          format: 'number :: Selling price of item in USD'
+        oldUid:
+          type: integer
+          description: User id (deprecated)
+          format: 'integer(int32) :: User id (deprecated)'
+        sellingPrice:
+          type: array
+          description: List of JSON with price in USDat which each item was sold
+          format: 'array :: List of JSON with price in USDat which each item was sold'
+          items:
+            "$ref": "#/components/schemas/SellingPrice"
+    ForumMarketNet:
+      type: object
+      properties:
+        indicator:
+          type: string
+          format: string
+        userIds:
+          uniqueItems: true
+          type: array
+          format: array
+          items:
+            type: integer
+            format: int32
+        numberOfPosts:
+          type: integer
+          format: integer(int32)
+    GenericResponseForumMarketNet:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/ForumMarketNet"
+        count:
+          type: integer
+          format: integer(int64)
+    GenericResponseUserSocialNetworkModel:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/UserSocialNetworkModel"
+        count:
+          type: integer
+          format: integer(int64)
+    UserSocialNetworkModel:
+      type: object
+      properties:
+        userId:
+          type: integer
+          format: integer(int32)
+        totalInteractions:
+          type: integer
+          format: integer(int32)
+        tags:
+          type: array
+          format: array
+          items:
+            type: string
+    GenericResponseUserNetworkModel:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/UserNetworkModel"
+        count:
+          type: integer
+          format: integer(int64)
+    UserNetworkModel:
+      type: object
+      properties:
+        UserA:
+          type: string
+          format: string
+        UserB:
+          type: string
+          format: string
+        Count:
+          type: integer
+          format: integer(int32)
+        Reputation:
+          type: integer
+          format: integer(int32)
+    GenericResponseMarketNetworkModel:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/MarketNetworkModel"
+        count:
+          type: integer
+          format: integer(int64)
+    MarketNetworkModel:
+      type: object
+      properties:
+        User:
+          type: string
+          format: string
+        Market:
+          type: string
+          format: string
+        Count:
+          type: integer
+          format: integer(int32)
+    GenerateForumNetModel:
+      type: object
+      properties:
+        User:
+          type: string
+          format: string
+        Forum:
+          type: string
+          format: string
+        Count:
+          type: integer
+          format: integer(int32)
+    GenericResponseGenerateForumNetModel:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/GenerateForumNetModel"
+        count:
+          type: integer
+          format: integer(int64)
+    GenericResponseUserPost:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/UserPost"
+        count:
+          type: integer
+          format: integer(int64)
+    UserPost:
+      type: object
+      properties:
+        postContent:
+          type: string
+          description: Content of the post
+          format: 'string :: Content of the post'
+        createdDate:
+          type: string
+          description: Date when the post was created
+          format: 'string(date) :: Date when the post was created'
+        postedDate:
+          type: string
+          description: Date when the post was posted by user
+          format: 'string(date) :: Date when the post was posted by user'
+        oldForumsId:
+          type: integer
+          description: Forum Id (deprecated)
+          format: 'integer(int32) :: Forum Id (deprecated)'
+        forumsId:
+          type: integer
+          description: Id of the forum where this post is posted
+          format: 'integer(int32) :: Id of the forum where this post is posted'
+        oldUid:
+          type: integer
+          description: User Id (deprecated)
+          format: 'integer(int32) :: User Id (deprecated)'
+        boardsName:
+          type: string
+          description: Name of the category of discussion on which the post is posted
+          format: 'string :: Name of the category of discussion on which the post
+            is posted'
+        oldPostId:
+          type: integer
+          description: Id of the post (deprecated)
+          format: 'integer(int32) :: Id of the post (deprecated)'
+        postsId:
+          type: string
+          description: Id of this post
+          format: 'string :: Id of this post'
+        uid:
+          type: integer
+          description: Id of the user who posted this post
+          format: 'integer(int32) :: Id of the user who posted this post'
+        recordedDate:
+          type: string
+          description: Date when this post was recorded in our DB
+          format: 'string(date) :: Date when this post was recorded in our DB'
+        indicator:
+          type: string
+          description: Indicator whether Post/Item/SocialMedia
+          format: 'string :: Indicator whether Post/Item/SocialMedia'
+    ForumUsersStats:
+      type: object
+      properties:
+        firstSeen:
+          type: string
+          format: string(date)
+        lastActive:
+          type: string
+          format: string(date)
+        newUid:
+          type: string
+          format: string
+        newWebsiteId:
+          type: string
+          format: string
+        numPosts:
+          type: integer
+          format: integer(int32)
+        numTopics:
+          type: integer
+          format: integer(int32)
+        uid:
+          type: integer
+          format: integer(int32)
+        forumsId:
+          type: integer
+          format: integer(int32)
+    GenericResponseForumUsersStats:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/ForumUsersStats"
+        count:
+          type: integer
+          format: integer(int64)
+    GenericResponseMarketplaceStatistics:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/MarketplaceStatistics"
+        count:
+          type: integer
+          format: integer(int64)
+    MarketplaceStatistics:
+      type: object
+      properties:
+        maxPrice:
+          type: number
+          description: Maximum price of product on this Marketplace
+          format: 'number(double) :: Maximum price of product on this Marketplace'
+        minPrice:
+          type: number
+          description: Minimum price of product on this Marketplace
+          format: 'number(double) :: Minimum price of product on this Marketplace'
+        numProducts:
+          type: number
+          description: Number of products on this Marketplace
+          format: 'number(double) :: Number of products on this Marketplace'
+        totalPrice:
+          type: number
+          description: Total price calculated by number of products multiplied its
+            price
+          format: 'number(double) :: Total price calculated by number of products
+            multiplied its price'
+        oldMarketplaceId:
+          type: integer
+          description: Id of the marketplace in integer (deprecated)
+          format: 'integer(int64) :: Id of the marketplace in integer (deprecated)'
+        marketplaceId:
+          type: integer
+          description: Id of the Marketplace in integer.
+          format: 'integer(int32) :: Id of the Marketplace in integer.'
+        avgPrice:
+          type: number
+          description: Average price of product on this Marketplace
+          format: 'number(double) :: Average price of product on this Marketplace'
+    ForumPostsTopicsStats:
+      type: object
+      properties:
+        forumsId:
+          type: integer
+          description: Id of the forum in integer
+          format: 'integer(int32) :: Id of the forum in integer'
+        newWebsiteId:
+          type: string
+          description: Record Id of the website
+          format: 'string :: Record Id of the website'
+        numPosts:
+          type: integer
+          description: Number of posts on this forum
+          format: 'integer(int64) :: Number of posts on this forum'
+        numTopics:
+          type: integer
+          description: Number of Topics/categories on this forum
+          format: 'integer(int64) :: Number of Topics/categories on this forum'
+        numUsers:
+          type: integer
+          description: Number of users on this forum
+          format: 'integer(int64) :: Number of users on this forum'
+    GenericResponseForumPostsTopicsStats:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/ForumPostsTopicsStats"
+        count:
+          type: integer
+          format: integer(int64)
+  securitySchemes:
+    userId:
+      type: apiKey
+      description: "(Required)"
+      name: userId
+      in: header
+    apiKey:
+      type: apiKey
+      description: "(Required)"
+      name: apiKey
+      in: header
+

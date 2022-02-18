@@ -1,0 +1,2513 @@
+---
+openapi: 3.0.1
+info:
+  title: CYR3CON_D1LIGENCE
+  version: '530'
+servers:
+- url: https://dev.apigargoyle.com
+security:
+- userId: []
+  apiKey: []
+paths:
+  "/v1/account/login":
+    post:
+      tags:
+      - DILIGENCE
+      description: authorizes user and returns apiKey required in all other endpoints
+      operationId: Login
+      parameters:
+      - name: userId
+        in: header
+        description: User ID for the cyr3con
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: header
+        description: Password for the cyr3con.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LoginResponse"
+      security: []
+  "/v1/account/reset-password":
+    post:
+      tags:
+      - DILIGENCE
+      operationId: Reset Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/InitResetPasswordRequestDto"
+        required: true
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/change-password":
+    post:
+      tags:
+      - DILIGENCE
+      operationId: Change Password
+      parameters:
+      - name: oldPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: newPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: confirmPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/logout":
+    post:
+      tags:
+      - DILIGENCE
+      operationId: Logout
+      parameters:
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LogoutStatus"
+      security: []
+  "/v1/analysis/forums/statistics":
+    get:
+      tags:
+      - DILIGENCE
+      description: Get a list of statistics about forums
+      operationId: Forum Statistics
+      parameters:
+      - name: forumsId
+        in: query
+        description: Id of the forum. Allows “=” behavior
+        required: true
+        schema:
+          type: integer
+          format: int32
+      - name: oldForumsId
+        in: query
+        description: Website ID
+        required: false
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseForumPostsTopicsStats"
+      security: []
+  "/v1/analysis/marketplaces/statistics":
+    get:
+      tags:
+      - DILIGENCE
+      description: Get a list of marketplace statistics for different marketplaces
+      operationId: Marketplace Statistics
+      parameters:
+      - name: marketPlaceId
+        in: query
+        description: marketPlaceId of the marketplace
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: oldMarketPlaceId
+        in: query
+        description: Website Id.
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseMarketplaceStatistics"
+      security: []
+  "/v1/analysis/users/activities":
+    get:
+      tags:
+      - DILIGENCE
+      description: Get a list of statistics about users and the forums in which they
+        are posting
+      operationId: User Activity
+      parameters:
+      - name: uid
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: oldUid
+        in: query
+        description: Uid of the Exploit DB Data.
+        required: false
+        schema:
+          type: string
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseForumUsersStats"
+      security: []
+  "/v1/analysis/users/posts":
+    get:
+      tags:
+      - DILIGENCE
+      description: To get a list of Users posts
+      operationId: User Posts
+      parameters:
+      - name: uid
+        in: query
+        description: Uid of Exploit db data.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseUserPost"
+      security: []
+  "/v1/hacking/items":
+    get:
+      tags:
+      - DILIGENCE
+      description: gives information of hacking items
+      operationId: Hacking Items
+      parameters:
+      - name: websiteIntId
+        in: query
+        description: Returns results with particular websiteId.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: itemName
+        in: query
+        description: Name of product to be retrieved.
+        required: false
+        schema:
+          type: string
+      - name: itemId
+        in: query
+        description: itemId of the Item. Allows “=” behavior.
+        required: false
+        schema:
+          type: string
+      - name: startPrice
+        in: query
+        description: Initial price of an item offered in a marketplace.
+        required: false
+        schema:
+          type: number
+      - name: endPrice
+        in: query
+        description: Last recorded price of an item offered in a marketplace.
+        required: false
+        schema:
+          type: number
+      - name: language
+        in: query
+        description: language of the product listing. Match exact language
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: content
+        in: query
+        description: content that needs to be searched.
+        required: false
+        schema:
+          type: string
+      - name: enableFuzzy
+        in: query
+        description: Enable fuzziness in content search.
+        required: false
+        schema:
+          type: boolean
+      - name: phraseSearch
+        in: query
+        description: phrase that needs to be searched in the text.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: uid
+        in: query
+        description: uid of the user.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: itemCategory
+        in: query
+        description: Name of the category that items are classified into.
+        required: false
+        schema:
+          type: string
+      - name: itemDescription
+        in: query
+        description: Description of the item.
+        required: false
+        schema:
+          type: string
+      - name: itemCve
+        in: query
+        description: Returns results of all items associated with given CVE
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: pastDay
+        in: query
+        description: Boolean value to get data from past 5 days.
+        required: false
+        schema:
+          type: boolean
+      - name: getCount
+        in: query
+        description: Get result count.
+        required: false
+        schema:
+          type: boolean
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseHackingItems"
+      security: []
+  "/v1/hacking/posts":
+    get:
+      tags:
+      - DILIGENCE
+      description: To get a list of Hacking Posts on various forums/boards
+      operationId: Hacking Posts
+      parameters:
+      - name: forumsId
+        in: query
+        description: Returns all records for given forum Id.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: boardsName
+        in: query
+        description: Returns results for particular board Name.
+        required: false
+        schema:
+          type: string
+      - name: topicsName
+        in: query
+        description: Retrieve all the results for given Topic Name
+        required: false
+        schema:
+          type: string
+      - name: postsId
+        in: query
+        description: Returns all the results with given Post Id.
+        required: false
+        schema:
+          type: string
+      - name: postMs
+        in: query
+        description: Retrieve all the posts associated with given MS string.
+        required: false
+        schema:
+          type: string
+      - name: uid
+        in: query
+        description: Retrieve all the posts posted by given user Id.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: language
+        in: query
+        description: Return all the posts in given language.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: content
+        in: query
+        description: Returns all results with matching terms(ordered or unordered)
+          with strict syntax.
+        required: false
+        schema:
+          type: string
+      - name: enableFuzzy
+        in: query
+        description: If set to true, it will do the fuzzy search for the content being
+          passed.
+        required: false
+        schema:
+          type: boolean
+      - name: phraseSearch
+        in: query
+        description: Multiple ordered keywords to narrow down the results containing
+          those ordered terms.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: from
+        in: query
+        description: Start date from which results are retrieved.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: End date until which results needs to be retrieved.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: getCount
+        in: query
+        description: Get count on results retrieved.
+        required: false
+        schema:
+          type: boolean
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseHackingPosts"
+      security: []
+  "/v1/hacking/threads":
+    get:
+      tags:
+      - DILIGENCE
+      description: To get a list of Hacking Threads for a forum
+      operationId: Hacking Threads
+      parameters:
+      - name: forumsId
+        in: query
+        description: ID of the forum.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: boardsName
+        in: query
+        description: Name of the forum/board
+        required: false
+        schema:
+          type: string
+      - name: topicId
+        in: query
+        description: Return results with given topicId
+        required: false
+        schema:
+          type: string
+      - name: topicsName
+        in: query
+        description: Name of the topics
+        required: false
+        schema:
+          type: string
+      - name: postsId
+        in: query
+        description: Id of the post. Allows “=” behavior
+        required: false
+        schema:
+          type: string
+      - name: postCve
+        in: query
+        description: cve number in any post
+        required: false
+        schema:
+          type: string
+      - name: postMs
+        in: query
+        description: ms number in any post
+        required: false
+        schema:
+          type: string
+      - name: uid
+        in: query
+        description: UID for vulnerability.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: language
+        in: query
+        description: language of the product listing
+        required: false
+        schema:
+          type: string
+      - name: content
+        in: query
+        description: Used for content search over the content passed.
+        required: false
+        schema:
+          type: string
+      - name: enableFuzzy
+        in: query
+        description: If set to true, it will do the fuzzy search for the content being
+          passed.
+        required: false
+        schema:
+          type: boolean
+      - name: phraseSearch
+        in: query
+        description: phrase that needs to be searched in the text.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: pastDay
+        in: query
+        description: Boolean value to get data from past 5 days.
+        required: false
+        schema:
+          type: boolean
+      - name: getCount
+        in: query
+        description: Get result count.
+        required: false
+        schema:
+          type: boolean
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: true
+        schema:
+          maximum: 100
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseHackingThread"
+      security: []
+  "/v1/hacking/threads/{threadId}":
+    get:
+      tags:
+      - DILIGENCE
+      operationId: Hacking Thread
+      parameters:
+      - name: threadId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseHackingThread"
+      security: []
+  "/v1/hacking/threads/{threadId}/posts":
+    get:
+      tags:
+      - DILIGENCE
+      operationId: Hacking Posts for Thread
+      parameters:
+      - name: threadId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseHackingThreadPost"
+      security: []
+  "/v1/hacking/threads/{threadId}/posts/{postId}/context":
+    get:
+      tags:
+      - DILIGENCE
+      operationId: Hacking Post in Thread context
+      parameters:
+      - name: threadId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: pointer
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseHackingThreadPost"
+      security: []
+  "/v1/hacking/threads/{threadId}/posts/{postId}/location":
+    get:
+      tags:
+      - DILIGENCE
+      operationId: Hacking Post location in Thread
+      parameters:
+      - name: threadId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseHackingThreadPostLocation"
+      security: []
+  "/v1/records/social-media":
+    get:
+      tags:
+      - DILIGENCE
+      description: Get data collected from Social Media
+      operationId: Social Media
+      parameters:
+      - name: hashTag
+        in: query
+        description: Returns all the tweets that have mentioned this hash tag.
+        required: false
+        schema:
+          type: string
+      - name: userName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: conversationId
+        in: query
+        description: Returns all the tweets with the exact conversationId
+        required: false
+        schema:
+          type: string
+      - name: language
+        in: query
+        description: Language of the original post
+        required: false
+        schema:
+          type: string
+      - name: retweet
+        in: query
+        description: Returns all the tweets with the exact retweet count.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: postId
+        in: query
+        description: Returns all the tweets with the exact tweetId
+        required: false
+        schema:
+          type: string
+      - name: content
+        in: query
+        description: Used for content search over the content passed.
+        required: false
+        schema:
+          type: string
+      - name: enableFuzzy
+        in: query
+        description: If set to true, it will do the fuzzy search for the content being
+          passed.
+        required: false
+        schema:
+          type: boolean
+      - name: phraseSearch
+        in: query
+        description: phrase that needs to be searched in the text.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: getCount
+        in: query
+        description: Get result count.
+        required: false
+        schema:
+          type: boolean
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_time_seconds
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseSocialMediaData"
+      security: []
+  "/v1/tagged/content":
+    get:
+      tags:
+      - DILIGENCE
+      description: searches tagged content
+      operationId: Tagged Content
+      parameters:
+      - name: entityTag
+        in: query
+        description: Pass the tag you want to search posts for.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseTaggedContent"
+      security: []
+  "/v1/vendor-products":
+    get:
+      tags:
+      - DILIGENCE
+      description: Get a list of vendor product information given a vendorId.
+      operationId: Vendor Products
+      parameters:
+      - name: uid
+        in: query
+        description: fetch specific records based on given uid.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: oldUid
+        in: query
+        description: fetch specific records based on given old uid.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: getCount
+        in: query
+        description: get result count.
+        required: false
+        schema:
+          type: boolean
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseVendorProducts"
+      security: []
+  "/v1/websites/forums/btc/ids/mappings":
+    get:
+      tags:
+      - DILIGENCE
+      operationId: getForumsBtcIdsMappingsData
+      parameters:
+      - name: cryptoAddress
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: userIntId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: websiteIntId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: indicator
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseForumsBtcIdsMappings"
+      security: []
+components:
+  schemas:
+    InitResetPasswordRequestDto:
+      required:
+      - userId
+      type: object
+      properties:
+        userId:
+          type: string
+          format: string
+    AccountActionStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LogoutStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LoginResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          format: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        userId:
+          type: string
+          format: string
+        roles:
+          type: array
+          format: array
+          items:
+            type: string
+        uiFeatures:
+          type: array
+          format: array
+          items:
+            type: string
+        apiKey:
+          type: string
+          format: string(uuid)
+        apiKeyCreatedOn:
+          type: string
+          format: string(date-time)
+        apiKeyExpiresOn:
+          type: string
+          format: string(date-time)
+        changePassword:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        twoFactor:
+          type: boolean
+          format: boolean
+        lastActivityTime:
+          type: string
+          format: string(date-time)
+        privacyPolicyAcceptanceRequired:
+          type: boolean
+          format: boolean
+    ForumsBtcIdsMappings:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+        websiteIntId:
+          type: integer
+          format: integer(int32)
+        cryptoId:
+          type: string
+          format: string
+        userIntId:
+          type: integer
+          format: integer(int32)
+        cryptoAddress:
+          type: string
+          format: string
+        forumsId:
+          type: string
+          format: string
+        postsId:
+          type: string
+          format: string
+        topicsId:
+          type: string
+          format: string
+        usersId:
+          type: string
+          format: string
+        indicator:
+          type: string
+          format: string
+        obtainedCollection:
+          type: string
+          format: string
+    GenericResponseForumsBtcIdsMappings:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/ForumsBtcIdsMappings"
+        count:
+          type: integer
+          format: integer(int64)
+    GenericResponseVendorProducts:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/VendorProducts"
+        count:
+          type: integer
+          format: integer(int64)
+    SellingPrice:
+      type: object
+      properties:
+        sellingPriceUsd:
+          type: number
+          description: price in USD price at which this item was sold
+          format: 'number :: price in USD price at which this item was sold'
+      description: List of JSON with price in USDat which each item was sold
+    VendorProducts:
+      type: object
+      properties:
+        uid:
+          type: integer
+          description: Id of the vendor
+          format: 'integer(int32) :: Id of the vendor'
+        itemDescription:
+          type: string
+          description: Description of this item
+          format: 'string :: Description of this item'
+        itemAddedDate:
+          type: string
+          description: Date when item was listed by Vendor
+          format: 'string(date) :: Date when item was listed by Vendor'
+        itemName:
+          type: string
+          description: Name of the item as listed
+          format: 'string :: Name of the item as listed'
+        createdDate:
+          type: string
+          description: Date when the item post was created
+          format: 'string(date) :: Date when the item post was created'
+        sellingPriceUsd:
+          type: number
+          description: Selling price of item in USD
+          format: 'number :: Selling price of item in USD'
+        oldUid:
+          type: integer
+          description: User id (deprecated)
+          format: 'integer(int32) :: User id (deprecated)'
+        sellingPrice:
+          type: array
+          description: List of JSON with price in USDat which each item was sold
+          format: 'array :: List of JSON with price in USDat which each item was sold'
+          items:
+            "$ref": "#/components/schemas/SellingPrice"
+    GenericResponseTaggedContent:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/TaggedContent"
+        count:
+          type: integer
+          format: integer(int64)
+    TaggedContent:
+      type: object
+      properties:
+        postContent:
+          type: string
+          description: Content of the post
+          format: 'string :: Content of the post'
+        recordedDate:
+          type: string
+          description: Date when the post was recorded in our Database
+          format: 'string(date) :: Date when the post was recorded in our Database'
+        entityTags:
+          type: array
+          description: List of tags extracted from the post by our model
+          format: 'array :: List of tags extracted from the post by our model'
+          items:
+            type: string
+            description: List of tags extracted from the post by our model
+        websiteIntId:
+          type: integer
+          description: Integer Id of the website from which post was scraped
+          format: 'integer(int32) :: Integer Id of the website from which post was
+            scraped'
+        userIntId:
+          type: integer
+          description: Integer Id of the user who posted this post content.
+          format: 'integer(int32) :: Integer Id of the user who posted this post content.'
+    AttackVectorNlpTags:
+      type: object
+      properties:
+        attackVector:
+          type: array
+          format: array
+          items:
+            type: string
+    GenericResponseSocialMediaData:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/SocialMediaData"
+        count:
+          type: integer
+          format: integer(int64)
+    MalcodeNlpTags:
+      type: object
+      properties:
+        attack:
+          type: array
+          format: array
+          items:
+            type: string
+    SocialMediaData:
+      type: object
+      properties:
+        contentType:
+          type: string
+          description: Indicator of from where did the post was retrieved from DB
+          format: 'string :: Indicator of from where did the post was retrieved from
+            DB'
+        userName:
+          type: string
+          description: Name of the user who posted it
+          format: 'string :: Name of the user who posted it'
+        postContent:
+          type: string
+          description: Content of the post
+          format: 'string :: Content of the post'
+        hashtags:
+          type: array
+          description: List of hashtags attached to the post
+          format: 'array :: List of hashtags attached to the post'
+          items:
+            type: string
+            description: List of hashtags attached to the post
+        retweet:
+          type: integer
+          description: Number of retweets for the post
+          format: 'integer(int32) :: Number of retweets for the post'
+        language:
+          type: string
+          format: string
+        favorites:
+          type: integer
+          description: Number of favorites
+          format: 'integer(int32) :: Number of favorites'
+        recordedDate:
+          type: string
+          description: Date when the post was stored in DB
+          format: 'string(date) :: Date when the post was stored in DB'
+        postId:
+          type: string
+          description: Id of the post
+          format: 'string :: Id of the post'
+        conversationId:
+          type: string
+          description: Id of the conversation
+          format: 'string :: Id of the conversation'
+        mentions:
+          type: string
+          description: Number of mentions for this post
+          format: 'string :: Number of mentions for this post'
+        scrapedDate:
+          type: string
+          description: Date when the post was scraped
+          format: 'string(date) :: Date when the post was scraped'
+        tags:
+          type: array
+          description: List of tags retrieved from this post by our model
+          format: 'array :: List of tags retrieved from this post by our model'
+          items:
+            type: string
+            description: List of tags retrieved from this post by our model
+        softwareNlpTags:
+          type: array
+          format: array
+          items:
+            type: string
+        malcodeNlpTags:
+          type: array
+          format: array
+          items:
+            type: string
+        attackVectorNlpTags:
+          type: array
+          format: array
+          items:
+            type: string
+        recordedTime:
+          type: string
+          description: Time when the post was recorded
+          format: 'string(HH24:MM:SS.SSS) :: Time when the post was recorded'
+        scrapedTime:
+          type: string
+          description: Time when the post was scraped
+          format: 'string(HH24:MM:SS.SSS) :: Time when the post was scraped'
+        score:
+          type: number
+          format: number
+        _score:
+          type: number
+          format: number
+        Software_NLP_tags:
+          "$ref": "#/components/schemas/SoftwareNlpTags"
+        Malcode_NLP_tags:
+          "$ref": "#/components/schemas/MalcodeNlpTags"
+        AttackVul_NLP_tags:
+          "$ref": "#/components/schemas/AttackVectorNlpTags"
+    SoftwareNlpTags:
+      type: object
+      properties:
+        software:
+          type: array
+          format: array
+          items:
+            type: string
+    GenericResponseHackingThread:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/HackingThread"
+        count:
+          type: integer
+          format: integer(int64)
+    HackingThread:
+      type: object
+      properties:
+        topicId:
+          type: string
+          description: unique identifier for thread
+          format: 'string :: unique identifier for thread'
+        topicName:
+          type: string
+          description: Topic name, as and if it appears on website
+          format: 'string :: Topic name, as and if it appears on website'
+        lastRecordedDate:
+          type: string
+          description: date of last post recorded to date
+          format: 'string(date) :: date of last post recorded to date'
+        boardsName:
+          type: string
+          format: string
+        forumsId:
+          type: integer
+          description: unique forum identifier
+          format: 'integer(int32) :: unique forum identifier'
+        posts:
+          type: array
+          description: catalogue of posts constituting the thread
+          format: 'array :: catalogue of posts constituting the thread'
+          items:
+            "$ref": "#/components/schemas/HackingThreadPost"
+    HackingThreadPost:
+      type: object
+      properties:
+        boardsName:
+          type: string
+          description: Name of the category of discussion.
+          format: 'string :: Name of the category of discussion.'
+        topicsName:
+          type: string
+          description: Name of the topic of thread.
+          format: 'string :: Name of the topic of thread.'
+        newTitleId:
+          type: string
+          description: Record Id of the page in DB
+          format: 'string :: Record Id of the page in DB'
+        language:
+          type: string
+          description: Language in which post is posted
+          format: 'string :: Language in which post is posted'
+        tags:
+          type: array
+          description: List of tags extracted from this post content
+          format: 'array :: List of tags extracted from this post content'
+          items:
+            type: string
+            description: List of tags extracted from this post content
+        softwareTags:
+          type: array
+          description: List of software tags identified by our model from this post
+            content
+          format: 'array :: List of software tags identified by our model from this
+            post content'
+          items:
+            type: string
+            description: List of software tags identified by our model from this post
+              content
+        financialTags:
+          type: array
+          description: List of financial tags identified by our model from this post
+            content
+          format: 'array :: List of financial tags identified by our model from this
+            post content'
+          items:
+            type: string
+            description: List of financial tags identified by our model from this
+              post content
+        postsId:
+          type: string
+          description: Id of the post
+          format: 'string :: Id of the post'
+        postedDate:
+          type: string
+          description: Date when this post is posted
+          format: 'string(date) :: Date when this post is posted'
+        scrapedDate:
+          type: string
+          description: Date when this post data was scraped
+          format: 'string(date) :: Date when this post data was scraped'
+        postMs:
+          type: string
+          format: string
+        recordedDate:
+          type: string
+          description: Date when this post data was collected in our DB
+          format: 'string(date) :: Date when this post data was collected in our DB'
+        recordedTime:
+          type: string
+          description: Time when this post data was collected in our DB
+          format: 'string(HH24:MM:SS.SSS) :: Time when this post data was collected
+            in our DB'
+        oldPostsId:
+          type: integer
+          description: Post Id (deprecated)
+          format: 'integer(int64) :: Post Id (deprecated)'
+        userId:
+          type: integer
+          description: Id of the user who posted this post
+          format: 'integer(int32) :: Id of the user who posted this post'
+        postContent:
+          type: string
+          description: Content of the post
+          format: 'string :: Content of the post'
+        autoTranslated:
+          type: boolean
+          description: Boolean value for indicating whether post content is translated
+            or not
+          format: 'boolean :: Boolean value for indicating whether post content is
+            translated or not'
+        forumsId:
+          type: integer
+          description: Id of the forum on which this thread is hosted
+          format: 'integer(int32) :: Id of the forum on which this thread is hosted'
+      description: catalogue of posts constituting the thread
+    GenericResponseHackingThreadPost:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/HackingThreadPost"
+        count:
+          type: integer
+          format: integer(int64)
+    GenericResponseHackingThreadPostLocation:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/HackingThreadPostLocation"
+        count:
+          type: integer
+          format: integer(int64)
+    HackingThreadPostLocation:
+      type: object
+      properties:
+        start:
+          type: integer
+          description: Start index
+          format: 'integer(int32) :: Start index'
+        limit:
+          type: integer
+          description: Number of posts limited on single page
+          format: 'integer(int32) :: Number of posts limited on single page'
+    GenericResponseHackingPosts:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/HackingPosts"
+        count:
+          type: integer
+          format: integer(int64)
+    HackingPosts:
+      type: object
+      properties:
+        autoTranslated:
+          type: boolean
+          format: boolean
+        language:
+          type: string
+          description: Language in which Post is posted
+          format: 'string :: Language in which Post is posted'
+        tags:
+          type: array
+          description: List of tags extracted from this post
+          format: 'array :: List of tags extracted from this post'
+          items:
+            type: string
+            description: List of tags extracted from this post
+        softwareTags:
+          type: array
+          description: List of software tags identified by our model from this post
+          format: 'array :: List of software tags identified by our model from this
+            post'
+          items:
+            type: string
+            description: List of software tags identified by our model from this post
+        financialTags:
+          type: array
+          description: List of financial tags identified by our model from this post
+          format: 'array :: List of financial tags identified by our model from this
+            post'
+          items:
+            type: string
+            description: List of financial tags identified by our model from this
+              post
+        postedDate:
+          type: string
+          description: Date when this post was posted
+          format: 'string(date) :: Date when this post was posted'
+        scrapedDate:
+          type: string
+          description: Date when this post data was scraped
+          format: 'string(date) :: Date when this post data was scraped'
+        recordedDate:
+          type: string
+          description: Date when this post data was collected in our DB
+          format: 'string(date) :: Date when this post data was collected in our DB'
+        btcAddress:
+          type: string
+          description: Bitcoin Address if mentioned in this post
+          format: 'string :: Bitcoin Address if mentioned in this post'
+        translatedTitle:
+          type: string
+          description: Translation of item name in English
+          format: 'string :: Translation of item name in English'
+        contentId:
+          type: integer
+          description: Id of post content
+          format: 'integer(int64) :: Id of post content'
+        websiteIntId:
+          type: integer
+          description: Integer Website Id of the website where post is posted
+          format: 'integer(int32) :: Integer Website Id of the website where post
+            is posted'
+        userId:
+          type: integer
+          description: User Id of the user who posted this post
+          format: 'integer(int32) :: User Id of the user who posted this post'
+        id:
+          type: string
+          description: Record Id of this post in DB
+          format: 'string :: Record Id of this post in DB'
+        indicator:
+          type: string
+          description: Indicator of whether it is item/post/socialmedia
+          format: 'string :: Indicator of whether it is item/post/socialmedia'
+        postContent:
+          type: string
+          description: Description of the post
+          format: 'string :: Description of the post'
+        recordedTime:
+          type: string
+          format: string
+        originalText:
+          type: string
+          description: Different than translatedContent if original language is other
+            than English
+          format: 'string :: Different than translatedContent if original language
+            is other than English'
+        forumsId:
+          type: integer
+          description: Id of the forum
+          format: 'integer(int32) :: Id of the forum'
+        boardsName:
+          type: string
+          description: Name of the category of discussion.
+          format: 'string :: Name of the category of discussion.'
+        topicsName:
+          type: string
+          description: Name of the topic of thread.
+          format: 'string :: Name of the topic of thread.'
+        newTitleId:
+          type: string
+          description: Record Id of the page in DB
+          format: 'string :: Record Id of the page in DB'
+        topicId:
+          type: integer
+          description: Topic Id of thread.
+          format: 'integer(int32) :: Topic Id of thread.'
+        pgpKeys:
+          type: array
+          format: array
+          items:
+            type: string
+        entityTags:
+          type: array
+          description: List of entities extracted from Post content
+          format: 'array :: List of entities extracted from Post content'
+          items:
+            type: string
+            description: List of entities extracted from Post content
+        postsId:
+          type: string
+          description: Id of the post.
+          format: 'string :: Id of the post.'
+        postMs:
+          type: string
+          format: string
+        softwareNlpTags:
+          type: array
+          format: array
+          items:
+            type: string
+        malcodeNlpTags:
+          type: array
+          format: array
+          items:
+            type: string
+        attackVectorNlpTags:
+          type: array
+          format: array
+          items:
+            type: string
+        score:
+          type: number
+          format: number
+        _score:
+          type: number
+          format: number
+        Software_NLP_tags:
+          "$ref": "#/components/schemas/SoftwareNlpTags"
+        Malcode_NLP_tags:
+          "$ref": "#/components/schemas/MalcodeNlpTags"
+        AttackVul_NLP_tags:
+          "$ref": "#/components/schemas/AttackVectorNlpTags"
+    GenericResponseHackingItems:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/HackingItems"
+        count:
+          type: integer
+          format: integer(int64)
+    HackingItems:
+      type: object
+      properties:
+        autoTranslated:
+          type: boolean
+          format: boolean
+        language:
+          type: string
+          description: Language in which Item is posted
+          format: 'string :: Language in which Item is posted'
+        tags:
+          type: array
+          description: List of tags attached to this item
+          format: 'array :: List of tags attached to this item'
+          items:
+            type: string
+            description: List of tags attached to this item
+        softwareTags:
+          type: array
+          description: List of software tags identified by our model from this item
+          format: 'array :: List of software tags identified by our model from this
+            item'
+          items:
+            type: string
+            description: List of software tags identified by our model from this item
+        financialTags:
+          type: array
+          description: List of financial tags identified by our model from this item
+          format: 'array :: List of financial tags identified by our model from this
+            item'
+          items:
+            type: string
+            description: List of financial tags identified by our model from this
+              item
+        postedDate:
+          type: string
+          description: Date when this item was posted
+          format: 'string(date) :: Date when this item was posted'
+        scrapedDate:
+          type: string
+          description: Date when this item data was scraped
+          format: 'string(date) :: Date when this item data was scraped'
+        recordedDate:
+          type: string
+          description: Date when this item data was collected in our DB
+          format: 'string(date) :: Date when this item data was collected in our DB'
+        btcAddress:
+          type: string
+          description: Bitcoin Address if mentioned for this item purchase
+          format: 'string :: Bitcoin Address if mentioned for this item purchase'
+        translatedTitle:
+          type: string
+          description: Translation of item name in English
+          format: 'string :: Translation of item name in English'
+        translatedContent:
+          type: string
+          description: Translation of item description in English
+          format: 'string :: Translation of item description in English'
+        websiteIntId:
+          type: integer
+          description: Integer Website Id of the website where item is listed
+          format: 'integer(int32) :: Integer Website Id of the website where item
+            is listed'
+        userId:
+          type: integer
+          description: VendorId of the vendor who posted this item
+          format: 'integer(int32) :: VendorId of the vendor who posted this item'
+        id:
+          type: string
+          description: Record Id of this item in DB
+          format: 'string :: Record Id of this item in DB'
+        indicator:
+          type: string
+          description: Indicator of whether it is item/post/socialmedia
+          format: 'string :: Indicator of whether it is item/post/socialmedia'
+        recordedTime:
+          type: string
+          format: string
+        originalText:
+          type: string
+          description: Different than translatedContent if original language is other
+            than English
+          format: 'string :: Different than translatedContent if original language
+            is other than English'
+        marketPlaceId:
+          type: integer
+          description: Id of the Marketplace where this item is listed
+          format: 'integer(int32) :: Id of the Marketplace where this item is listed'
+        itemDescription:
+          type: string
+          description: Description of this item
+          format: 'string :: Description of this item'
+        itemCategory:
+          type: string
+          description: item category, as and if available on source website
+          format: 'string :: item category, as and if available on source website'
+        itemName:
+          type: string
+          description: Name of the item as listed
+          format: 'string :: Name of the item as listed'
+        itemVulnerabilityId:
+          type: string
+          description: CVE associated with this item if mentioned any
+          format: 'string :: CVE associated with this item if mentioned any'
+        itemEscrowinfo:
+          type: string
+          description: Information about Escrow if any
+          format: 'string :: Information about Escrow if any'
+        itemViews:
+          type: integer
+          description: Number of views for the listed item
+          format: 'integer(int32) :: Number of views for the listed item'
+        itemVendorRating:
+          type: string
+          description: Rating given to this item from particular vendor
+          format: 'string :: Rating given to this item from particular vendor'
+        quantitySold:
+          type: integer
+          description: Quantity of item sold
+          format: 'integer(int32) :: Quantity of item sold'
+        quantityLeft:
+          type: integer
+          description: Quantity of item left in stock
+          format: 'integer(int32) :: Quantity of item left in stock'
+        shippedFrom:
+          type: string
+          description: Location from which this item is shipped
+          format: 'string :: Location from which this item is shipped'
+        lastViewDate:
+          type: string
+          description: Latest date when this item was viewed
+          format: 'string(date) :: Latest date when this item was viewed'
+        successfulTransaction:
+          type: string
+          description: Transaction successful or not
+          format: 'string :: Transaction successful or not'
+        sellingPrice:
+          type: array
+          description: List of JSON with price in USDat which each item was sold
+          format: 'array :: List of JSON with price in USDat which each item was sold'
+          items:
+            "$ref": "#/components/schemas/SellingPrice"
+        itemId:
+          type: string
+          description: Record Id of item in DB
+          format: 'string :: Record Id of item in DB'
+        sellingPriceUsd:
+          type: number
+          description: Selling price of item in USD
+          format: 'number :: Selling price of item in USD'
+        score:
+          type: number
+          format: number
+        _score:
+          type: number
+          format: number
+    GenericResponseUserPost:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/UserPost"
+        count:
+          type: integer
+          format: integer(int64)
+    UserPost:
+      type: object
+      properties:
+        postContent:
+          type: string
+          description: Content of the post
+          format: 'string :: Content of the post'
+        createdDate:
+          type: string
+          description: Date when the post was created
+          format: 'string(date) :: Date when the post was created'
+        postedDate:
+          type: string
+          description: Date when the post was posted by user
+          format: 'string(date) :: Date when the post was posted by user'
+        oldForumsId:
+          type: integer
+          description: Forum Id (deprecated)
+          format: 'integer(int32) :: Forum Id (deprecated)'
+        forumsId:
+          type: integer
+          description: Id of the forum where this post is posted
+          format: 'integer(int32) :: Id of the forum where this post is posted'
+        oldUid:
+          type: integer
+          description: User Id (deprecated)
+          format: 'integer(int32) :: User Id (deprecated)'
+        boardsName:
+          type: string
+          description: Name of the category of discussion on which the post is posted
+          format: 'string :: Name of the category of discussion on which the post
+            is posted'
+        oldPostId:
+          type: integer
+          description: Id of the post (deprecated)
+          format: 'integer(int32) :: Id of the post (deprecated)'
+        postsId:
+          type: string
+          description: Id of this post
+          format: 'string :: Id of this post'
+        uid:
+          type: integer
+          description: Id of the user who posted this post
+          format: 'integer(int32) :: Id of the user who posted this post'
+        recordedDate:
+          type: string
+          description: Date when this post was recorded in our DB
+          format: 'string(date) :: Date when this post was recorded in our DB'
+        indicator:
+          type: string
+          description: Indicator whether Post/Item/SocialMedia
+          format: 'string :: Indicator whether Post/Item/SocialMedia'
+    ForumUsersStats:
+      type: object
+      properties:
+        firstSeen:
+          type: string
+          format: string(date)
+        lastActive:
+          type: string
+          format: string(date)
+        newUid:
+          type: string
+          format: string
+        newWebsiteId:
+          type: string
+          format: string
+        numPosts:
+          type: integer
+          format: integer(int32)
+        numTopics:
+          type: integer
+          format: integer(int32)
+        uid:
+          type: integer
+          format: integer(int32)
+        forumsId:
+          type: integer
+          format: integer(int32)
+    GenericResponseForumUsersStats:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/ForumUsersStats"
+        count:
+          type: integer
+          format: integer(int64)
+    GenericResponseMarketplaceStatistics:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/MarketplaceStatistics"
+        count:
+          type: integer
+          format: integer(int64)
+    MarketplaceStatistics:
+      type: object
+      properties:
+        maxPrice:
+          type: number
+          description: Maximum price of product on this Marketplace
+          format: 'number(double) :: Maximum price of product on this Marketplace'
+        minPrice:
+          type: number
+          description: Minimum price of product on this Marketplace
+          format: 'number(double) :: Minimum price of product on this Marketplace'
+        numProducts:
+          type: number
+          description: Number of products on this Marketplace
+          format: 'number(double) :: Number of products on this Marketplace'
+        totalPrice:
+          type: number
+          description: Total price calculated by number of products multiplied its
+            price
+          format: 'number(double) :: Total price calculated by number of products
+            multiplied its price'
+        oldMarketplaceId:
+          type: integer
+          description: Id of the marketplace in integer (deprecated)
+          format: 'integer(int64) :: Id of the marketplace in integer (deprecated)'
+        marketplaceId:
+          type: integer
+          description: Id of the Marketplace in integer.
+          format: 'integer(int32) :: Id of the Marketplace in integer.'
+        avgPrice:
+          type: number
+          description: Average price of product on this Marketplace
+          format: 'number(double) :: Average price of product on this Marketplace'
+    ForumPostsTopicsStats:
+      type: object
+      properties:
+        forumsId:
+          type: integer
+          description: Id of the forum in integer
+          format: 'integer(int32) :: Id of the forum in integer'
+        newWebsiteId:
+          type: string
+          description: Record Id of the website
+          format: 'string :: Record Id of the website'
+        numPosts:
+          type: integer
+          description: Number of posts on this forum
+          format: 'integer(int64) :: Number of posts on this forum'
+        numTopics:
+          type: integer
+          description: Number of Topics/categories on this forum
+          format: 'integer(int64) :: Number of Topics/categories on this forum'
+        numUsers:
+          type: integer
+          description: Number of users on this forum
+          format: 'integer(int64) :: Number of users on this forum'
+    GenericResponseForumPostsTopicsStats:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/ForumPostsTopicsStats"
+        count:
+          type: integer
+          format: integer(int64)
+  securitySchemes:
+    userId:
+      type: apiKey
+      description: "(Required)"
+      name: userId
+      in: header
+    apiKey:
+      type: apiKey
+      description: "(Required)"
+      name: apiKey
+      in: header
+

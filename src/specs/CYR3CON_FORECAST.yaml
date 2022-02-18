@@ -1,0 +1,1964 @@
+---
+openapi: 3.0.1
+info:
+  title: CYR3CON_FORECAST
+  version: '530'
+servers:
+- url: https://dev.apigargoyle.com
+security:
+- userId: []
+  apiKey: []
+paths:
+  "/v1/account/login":
+    post:
+      tags:
+      - FORECAST
+      description: authorizes user and returns apiKey required in all other endpoints
+      operationId: Login
+      parameters:
+      - name: userId
+        in: header
+        description: User ID for the cyr3con
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: header
+        description: Password for the cyr3con.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LoginResponse"
+      security: []
+  "/v1/account/reset-password":
+    post:
+      tags:
+      - FORECAST
+      operationId: Reset Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/InitResetPasswordRequestDto"
+        required: true
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/change-password":
+    post:
+      tags:
+      - FORECAST
+      operationId: Change Password
+      parameters:
+      - name: oldPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: newPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: confirmPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/logout":
+    post:
+      tags:
+      - FORECAST
+      operationId: Logout
+      parameters:
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LogoutStatus"
+      security: []
+  "/v1/cpe-to-cves/mappings":
+    get:
+      tags:
+      - FORECAST
+      operationId: CPE-to-CVE
+      parameters:
+      - name: cpe.product
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cpe.searchRegex
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cpe.productRegex
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cpe.fullVersion
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: vulnerabilityId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseCpeInformation"
+      security: []
+  "/v1/cve-to-cpes/mappings":
+    get:
+      tags:
+      - FORECAST
+      description: To get the CPE groups corresponding to the a given CVE
+      operationId: CVE-to-CPE
+      parameters:
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date to which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: vulnerabilityId
+        in: query
+        description: Id for vulnerability
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: cpe
+        in: query
+        description: CPE
+        required: false
+        schema:
+          type: string
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseCveToCpeMapping"
+      security: []
+  "/v1/entities":
+    get:
+      tags:
+      - FORECAST
+      description: Get details of entities
+      operationId: getEntities
+      parameters:
+      - name: topicsName
+        in: query
+        description: Name of the topics
+        required: false
+        schema:
+          type: string
+      - name: boardsName
+        in: query
+        description: Name of the forum/board
+        required: false
+        schema:
+          type: string
+      - name: postsId
+        in: query
+        description: Id of the post. Allows “=” behavior
+        required: false
+        schema:
+          type: string
+      - name: language
+        in: query
+        description: language of the product listing
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: postMs
+        in: query
+        description: ms number in any post
+        required: false
+        schema:
+          type: string
+      - name: postCve
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: uid
+        in: query
+        description: UID for vulnerability.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: forumsId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: pastDay
+        in: query
+        description: Boolean value to get data from past 5 days.
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseHackingPostsWithEntities"
+      security: []
+  "/v1/entities/tags":
+    get:
+      tags:
+      - FORECAST
+      operationId: Entity Tags
+      parameters:
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: indicator
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: recordsId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: contentId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
+      - name: confidenceScore
+        in: query
+        required: false
+        schema:
+          type: number
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseEntityTag"
+      security: []
+  "/v1/f0recast-rules":
+    get:
+      tags:
+      - FORECAST
+      description: To get a list of Hacking Posts on various forums/boards.
+      operationId: getForecast
+      parameters:
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseForecast"
+      security: []
+  "/v1/financial-institutes":
+    get:
+      tags:
+      - FORECAST
+      description: get the list of financial institutions.
+      operationId: getFinancialInstitutes
+      parameters:
+      - name: institute
+        in: query
+        description: " Financial organization or institution."
+        required: true
+        schema:
+          type: string
+      - name: getCount
+        in: query
+        description: total number of results with the filters in place.
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseFinancialInstituteInfo"
+      security: []
+  "/v1/indicator-aggregations":
+    get:
+      tags:
+      - FORECAST
+      description: To get an aggregation of unique tags from posts.
+      operationId: getIndicatorAggregations
+      parameters:
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: source
+        in: query
+        description: The source file of keywords to be used.
+        required: false
+        schema:
+          type: string
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseIndicatorAggregations"
+      security: []
+  "/v1/tagged/combinations":
+    get:
+      tags:
+      - FORECAST
+      operationId: Tags Combinations
+      parameters:
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseTagsCombination"
+      security: []
+  "/v1/tagged/financial":
+    get:
+      tags:
+      - FORECAST
+      description: To get a list of item/posts with Financial tags.
+      operationId: getTaggedFinancial
+      parameters:
+      - name: type
+        in: query
+        description: type should be of value Item or Post
+        required: false
+        schema:
+          pattern: Item|Post
+          type: string
+      - name: tagContent
+        in: query
+        description: Search for item/post with a specific tag.
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: pastDay
+        in: query
+        description: Boolean value to get data from past 15 days.
+        required: false
+        schema:
+          type: boolean
+      - name: content
+        in: query
+        description: Used for content search over the content passed.
+        required: false
+        schema:
+          type: string
+      - name: enableFuzzy
+        in: query
+        description: If set to true, it will do the fuzzy search for the content being
+          passed.
+        required: false
+        schema:
+          type: boolean
+      - name: phraseSearch
+        in: query
+        description: phrase that needs to be searched in the text.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: getCount
+        in: query
+        description: Get result count.
+        required: false
+        schema:
+          type: boolean
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseHackingElement"
+      security: []
+  "/v1/tagged/software":
+    get:
+      tags:
+      - FORECAST
+      description: To get a list of item/posts with software tags.
+      operationId: getTaggedSoftware
+      parameters:
+      - name: type
+        in: query
+        description: type should be of value Item or Post
+        required: false
+        schema:
+          pattern: Item|Post
+          type: string
+      - name: tagContent
+        in: query
+        description: Search for item/post with a specific tag.
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: pastDay
+        in: query
+        description: Boolean value to get data from past 15 days.
+        required: false
+        schema:
+          type: boolean
+      - name: content
+        in: query
+        description: Used for content search over the content passed.
+        required: false
+        schema:
+          type: string
+      - name: enableFuzzy
+        in: query
+        description: If set to true, it will do the fuzzy search for the content being
+          passed.
+        required: false
+        schema:
+          type: boolean
+      - name: phraseSearch
+        in: query
+        description: phrase that needs to be searched in the text.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: getCount
+        in: query
+        description: Get result count.
+        required: false
+        schema:
+          type: boolean
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseHackingElement"
+      security: []
+  "/v1/tagged/software/tags":
+    get:
+      tags:
+      - FORECAST
+      description: To get a list software tags
+      operationId: getTaggedSoftwareTags
+      parameters:
+      - name: search
+        in: query
+        description: words on which the search needs to be done.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: from
+        in: query
+        description: Date from which information was scraped
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date to which information was scraped
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseTagCount"
+      security: []
+components:
+  schemas:
+    InitResetPasswordRequestDto:
+      required:
+      - userId
+      type: object
+      properties:
+        userId:
+          type: string
+          format: string
+    AccountActionStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LogoutStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LoginResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          format: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        userId:
+          type: string
+          format: string
+        roles:
+          type: array
+          format: array
+          items:
+            type: string
+        uiFeatures:
+          type: array
+          format: array
+          items:
+            type: string
+        apiKey:
+          type: string
+          format: string(uuid)
+        apiKeyCreatedOn:
+          type: string
+          format: string(date-time)
+        apiKeyExpiresOn:
+          type: string
+          format: string(date-time)
+        changePassword:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        twoFactor:
+          type: boolean
+          format: boolean
+        lastActivityTime:
+          type: string
+          format: string(date-time)
+        privacyPolicyAcceptanceRequired:
+          type: boolean
+          format: boolean
+    AttackVectorNlpTags:
+      type: object
+      properties:
+        attackVector:
+          type: array
+          format: array
+          items:
+            type: string
+    GenericResponseHackingElement:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            oneOf:
+            - "$ref": "#/components/schemas/HackingItems"
+            - "$ref": "#/components/schemas/HackingPosts"
+        count:
+          type: integer
+          format: integer(int64)
+    HackingElement:
+      type: object
+      properties:
+        score:
+          type: number
+          format: number
+          writeOnly: true
+        sortValues:
+          type: array
+          format: array
+          items:
+            type: object
+    HackingItems:
+      type: object
+      allOf:
+      - "$ref": "#/components/schemas/HackingElement"
+      - type: object
+        properties:
+          autoTranslated:
+            type: boolean
+          language:
+            type: string
+            description: Language in which Item is posted
+          tags:
+            type: array
+            description: List of tags attached to this item
+            items:
+              type: string
+              description: List of tags attached to this item
+          softwareTags:
+            type: array
+            description: List of software tags identified by our model from this item
+            items:
+              type: string
+              description: List of software tags identified by our model from this
+                item
+          financialTags:
+            type: array
+            description: List of financial tags identified by our model from this
+              item
+            items:
+              type: string
+              description: List of financial tags identified by our model from this
+                item
+          postedDate:
+            type: string
+            description: Date when this item was posted
+            format: date
+          scrapedDate:
+            type: string
+            description: Date when this item data was scraped
+            format: date
+          recordedDate:
+            type: string
+            description: Date when this item data was collected in our DB
+            format: date
+          btcAddress:
+            type: string
+            description: Bitcoin Address if mentioned for this item purchase
+          translatedTitle:
+            type: string
+            description: Translation of item name in English
+          translatedContent:
+            type: string
+            description: Translation of item description in English
+          websiteIntId:
+            type: integer
+            description: Integer Website Id of the website where item is listed
+            format: int32
+          userId:
+            type: integer
+            description: VendorId of the vendor who posted this item
+            format: int32
+          id:
+            type: string
+            description: Record Id of this item in DB
+          indicator:
+            type: string
+            description: Indicator of whether it is item/post/socialmedia
+          recordedTime:
+            type: string
+          originalText:
+            type: string
+            description: Different than translatedContent if original language is
+              other than English
+          marketPlaceId:
+            type: integer
+            description: Id of the Marketplace where this item is listed
+            format: int32
+          itemDescription:
+            type: string
+            description: Description of this item
+          itemCategory:
+            type: string
+            description: item category, as and if available on source website
+          itemName:
+            type: string
+            description: Name of the item as listed
+          itemVulnerabilityId:
+            type: string
+            description: CVE associated with this item if mentioned any
+          itemEscrowinfo:
+            type: string
+            description: Information about Escrow if any
+          itemViews:
+            type: integer
+            description: Number of views for the listed item
+            format: int32
+          itemVendorRating:
+            type: string
+            description: Rating given to this item from particular vendor
+          quantitySold:
+            type: integer
+            description: Quantity of item sold
+            format: int32
+          quantityLeft:
+            type: integer
+            description: Quantity of item left in stock
+            format: int32
+          shippedFrom:
+            type: string
+            description: Location from which this item is shipped
+          lastViewDate:
+            type: string
+            description: Latest date when this item was viewed
+            format: date
+          successfulTransaction:
+            type: string
+            description: Transaction successful or not
+          sellingPrice:
+            type: array
+            description: List of JSON with price in USDat which each item was sold
+            items:
+              "$ref": "#/components/schemas/SellingPrice"
+          itemId:
+            type: string
+            description: Record Id of item in DB
+          sellingPriceUsd:
+            type: number
+            description: Selling price of item in USD
+          score:
+            type: number
+          _score:
+            type: number
+    HackingPosts:
+      type: object
+      allOf:
+      - "$ref": "#/components/schemas/HackingElement"
+      - type: object
+        properties:
+          autoTranslated:
+            type: boolean
+          language:
+            type: string
+            description: Language in which Post is posted
+          tags:
+            type: array
+            description: List of tags extracted from this post
+            items:
+              type: string
+              description: List of tags extracted from this post
+          softwareTags:
+            type: array
+            description: List of software tags identified by our model from this post
+            items:
+              type: string
+              description: List of software tags identified by our model from this
+                post
+          financialTags:
+            type: array
+            description: List of financial tags identified by our model from this
+              post
+            items:
+              type: string
+              description: List of financial tags identified by our model from this
+                post
+          postedDate:
+            type: string
+            description: Date when this post was posted
+            format: date
+          scrapedDate:
+            type: string
+            description: Date when this post data was scraped
+            format: date
+          recordedDate:
+            type: string
+            description: Date when this post data was collected in our DB
+            format: date
+          btcAddress:
+            type: string
+            description: Bitcoin Address if mentioned in this post
+          translatedTitle:
+            type: string
+            description: Translation of item name in English
+          contentId:
+            type: integer
+            description: Id of post content
+            format: int64
+          websiteIntId:
+            type: integer
+            description: Integer Website Id of the website where post is posted
+            format: int32
+          userId:
+            type: integer
+            description: User Id of the user who posted this post
+            format: int32
+          id:
+            type: string
+            description: Record Id of this post in DB
+          indicator:
+            type: string
+            description: Indicator of whether it is item/post/socialmedia
+          postContent:
+            type: string
+            description: Description of the post
+          recordedTime:
+            type: string
+          originalText:
+            type: string
+            description: Different than translatedContent if original language is
+              other than English
+          forumsId:
+            type: integer
+            description: Id of the forum
+            format: int32
+          boardsName:
+            type: string
+            description: Name of the category of discussion.
+          topicsName:
+            type: string
+            description: Name of the topic of thread.
+          newTitleId:
+            type: string
+            description: Record Id of the page in DB
+          topicId:
+            type: integer
+            description: Topic Id of thread.
+            format: int32
+          pgpKeys:
+            type: array
+            items:
+              type: string
+          entityTags:
+            type: array
+            description: List of entities extracted from Post content
+            items:
+              type: string
+              description: List of entities extracted from Post content
+          postsId:
+            type: string
+            description: Id of the post.
+          postMs:
+            type: string
+          softwareNlpTags:
+            type: array
+            items:
+              type: string
+          malcodeNlpTags:
+            type: array
+            items:
+              type: string
+          attackVectorNlpTags:
+            type: array
+            items:
+              type: string
+          score:
+            type: number
+          _score:
+            type: number
+          Software_NLP_tags:
+            "$ref": "#/components/schemas/SoftwareNlpTags"
+          Malcode_NLP_tags:
+            "$ref": "#/components/schemas/MalcodeNlpTags"
+          AttackVul_NLP_tags:
+            "$ref": "#/components/schemas/AttackVectorNlpTags"
+    MalcodeNlpTags:
+      type: object
+      properties:
+        attack:
+          type: array
+          format: array
+          items:
+            type: string
+    SellingPrice:
+      type: object
+      properties:
+        sellingPriceUsd:
+          type: number
+          description: price in USD price at which this item was sold
+          format: 'number :: price in USD price at which this item was sold'
+      description: List of JSON with price in USDat which each item was sold
+    SoftwareNlpTags:
+      type: object
+      properties:
+        software:
+          type: array
+          format: array
+          items:
+            type: string
+    GenericResponseTagCount:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/TagCount"
+        count:
+          type: integer
+          format: integer(int64)
+    TagCount:
+      type: object
+      properties:
+        tag:
+          type: string
+          format: string
+        count:
+          type: integer
+          format: integer(int64)
+    GenericResponseTagsCombination:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/TagsCombination"
+        count:
+          type: integer
+          format: integer(int64)
+    TagsCombination:
+      type: object
+      properties:
+        entityFinancialSoftwareCombination:
+          type: string
+          format: string
+        entityFinancialCombination:
+          type: string
+          format: string
+        entitySoftwareCombination:
+          type: string
+          format: string
+        financialSoftwareCombination:
+          type: string
+          format: string
+        count:
+          type: integer
+          format: integer(int32)
+    GenericResponseIndicatorAggregations:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/IndicatorAggregations"
+        count:
+          type: integer
+          format: integer(int64)
+    IndicatorAggregations:
+      type: object
+      properties:
+        postedDate:
+          type: string
+          format: string(date)
+        recordedDate:
+          type: string
+          format: string(date)
+        textScore:
+          type: number
+          format: number(double)
+        relevanceScore:
+          type: number
+          format: number(double)
+        confidenceScore:
+          type: number
+          format: number(double)
+        keywordList:
+          type: string
+          format: string
+        sourceFile:
+          type: string
+          format: string
+        website_stats:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/WebsiteStats"
+    WebsiteStats:
+      type: object
+      properties:
+        websiteName:
+          type: string
+          format: string
+        websiteIntId:
+          type: integer
+          format: integer(int32)
+        tagStats:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+        cveTagStats:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int32
+    FinancialInstituteInfo:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        institute:
+          type: string
+          format: string
+    GenericResponseFinancialInstituteInfo:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/FinancialInstituteInfo"
+        count:
+          type: integer
+          format: integer(int64)
+    Forecast:
+      type: object
+      properties:
+        ruleID:
+          type: string
+          format: string
+        cpeGroup:
+          type: string
+          format: string
+        timeLagDays:
+          type: integer
+          format: integer(int32)
+        eventType:
+          type: string
+          format: string
+        targetSystem:
+          type: string
+          format: string
+        probability:
+          type: number
+          format: number(double)
+        probabilityTolerance:
+          type: number
+          format: number(double)
+        support:
+          type: number
+          format: number(double)
+        negativeProbability:
+          type: number
+          format: number(double)
+        likelihood:
+          type: number
+          format: number(double)
+        significance:
+          type: number
+          format: number(double)
+        priorOfConsequence:
+          type: number
+          format: number(double)
+        dateRuleAdded:
+          type: string
+          format: string(date)
+        dateRuleUpdated:
+          type: string
+          format: string(date)
+        forumIds:
+          type: string
+          format: string
+        marketIds:
+          type: string
+          format: string
+        restrictMarketplaces:
+          type: boolean
+          format: boolean
+        restrictForums:
+          type: boolean
+          format: boolean
+        ruleType:
+          type: string
+          format: string
+        numberOfAttacks:
+          type: integer
+          format: integer(int32)
+        threatActor:
+          type: boolean
+          format: boolean
+        tags:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/ForecastTags"
+    ForecastTags:
+      type: object
+      properties:
+        threshold:
+          type: integer
+          format: integer(int32)
+        tag:
+          type: string
+          format: string
+        type:
+          type: string
+          format: string
+    GenericResponseForecast:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/Forecast"
+        count:
+          type: integer
+          format: integer(int64)
+    EntityInfo:
+      type: object
+      properties:
+        freeBaseId:
+          type: string
+          format: string
+        freeBaseTypes:
+          type: array
+          format: array
+          items:
+            type: string
+        startingPos:
+          type: integer
+          format: integer(int32)
+        endingPos:
+          type: integer
+          format: integer(int32)
+        relevanceScore:
+          type: number
+          format: number
+        confidenceScore:
+          type: number
+          format: number
+        wikiDataId:
+          type: string
+          format: string
+        entityId:
+          type: string
+          format: string
+        entityEnglishId:
+          type: string
+          format: string
+        matchedText:
+          type: string
+          format: string
+        matchingTokens:
+          type: array
+          format: array
+          items:
+            type: integer
+            format: int32
+    GenericResponseHackingPostsWithEntities:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/HackingPostsWithEntities"
+        count:
+          type: integer
+          format: integer(int64)
+    HackingPostsWithEntities:
+      type: object
+      properties:
+        autoTranslated:
+          type: boolean
+          format: boolean
+        language:
+          type: string
+          description: Language in which Post is posted
+          format: 'string :: Language in which Post is posted'
+        tags:
+          type: array
+          description: List of tags extracted from this post
+          format: 'array :: List of tags extracted from this post'
+          items:
+            type: string
+            description: List of tags extracted from this post
+        softwareTags:
+          type: array
+          description: List of software tags identified by our model from this post
+          format: 'array :: List of software tags identified by our model from this
+            post'
+          items:
+            type: string
+            description: List of software tags identified by our model from this post
+        financialTags:
+          type: array
+          description: List of financial tags identified by our model from this post
+          format: 'array :: List of financial tags identified by our model from this
+            post'
+          items:
+            type: string
+            description: List of financial tags identified by our model from this
+              post
+        postedDate:
+          type: string
+          description: Date when this post was posted
+          format: 'string(date) :: Date when this post was posted'
+        scrapedDate:
+          type: string
+          description: Date when this post data was scraped
+          format: 'string(date) :: Date when this post data was scraped'
+        recordedDate:
+          type: string
+          description: Date when this post data was collected in our DB
+          format: 'string(date) :: Date when this post data was collected in our DB'
+        btcAddress:
+          type: string
+          description: Bitcoin Address if mentioned in this post
+          format: 'string :: Bitcoin Address if mentioned in this post'
+        translatedTitle:
+          type: string
+          description: Translation of item name in English
+          format: 'string :: Translation of item name in English'
+        contentId:
+          type: integer
+          description: Id of post content
+          format: 'integer(int64) :: Id of post content'
+        websiteIntId:
+          type: integer
+          description: Integer Website Id of the website where post is posted
+          format: 'integer(int32) :: Integer Website Id of the website where post
+            is posted'
+        userId:
+          type: integer
+          description: User Id of the user who posted this post
+          format: 'integer(int32) :: User Id of the user who posted this post'
+        id:
+          type: string
+          description: Record Id of this post in DB
+          format: 'string :: Record Id of this post in DB'
+        indicator:
+          type: string
+          description: Indicator of whether it is item/post/socialmedia
+          format: 'string :: Indicator of whether it is item/post/socialmedia'
+        postContent:
+          type: string
+          description: Description of the post
+          format: 'string :: Description of the post'
+        recordedTime:
+          type: string
+          format: string
+        originalText:
+          type: string
+          description: Different than translatedContent if original language is other
+            than English
+          format: 'string :: Different than translatedContent if original language
+            is other than English'
+        forumsId:
+          type: integer
+          description: Id of the forum
+          format: 'integer(int32) :: Id of the forum'
+        boardsName:
+          type: string
+          description: Name of the category of discussion.
+          format: 'string :: Name of the category of discussion.'
+        topicsName:
+          type: string
+          description: Name of the topic of thread.
+          format: 'string :: Name of the topic of thread.'
+        newTitleId:
+          type: string
+          description: Record Id of the page in DB
+          format: 'string :: Record Id of the page in DB'
+        topicId:
+          type: integer
+          description: Topic Id of thread.
+          format: 'integer(int32) :: Topic Id of thread.'
+        pgpKeys:
+          type: array
+          format: array
+          items:
+            type: string
+        entityTags:
+          type: array
+          description: List of entities extracted from Post content
+          format: 'array :: List of entities extracted from Post content'
+          items:
+            type: string
+            description: List of entities extracted from Post content
+        postsId:
+          type: string
+          description: Id of the post.
+          format: 'string :: Id of the post.'
+        postMs:
+          type: string
+          format: string
+        softwareNlpTags:
+          type: array
+          format: array
+          items:
+            type: string
+        malcodeNlpTags:
+          type: array
+          format: array
+          items:
+            type: string
+        attackVectorNlpTags:
+          type: array
+          format: array
+          items:
+            type: string
+        entities:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/EntityInfo"
+        score:
+          type: number
+          format: number
+        _score:
+          type: number
+          format: number
+        Software_NLP_tags:
+          "$ref": "#/components/schemas/SoftwareNlpTags"
+        Malcode_NLP_tags:
+          "$ref": "#/components/schemas/MalcodeNlpTags"
+        AttackVul_NLP_tags:
+          "$ref": "#/components/schemas/AttackVectorNlpTags"
+    EntityTag:
+      type: object
+      properties:
+        indicator:
+          type: string
+          format: string
+        recordsId:
+          type: string
+          format: string
+        recordedDate:
+          type: string
+          format: string(date)
+        scrapedDate:
+          type: string
+          format: string(date)
+        entity:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/EntityInfo"
+    GenericResponseEntityTag:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/EntityTag"
+        count:
+          type: integer
+          format: integer(int64)
+    CveToCpeMapping:
+      type: object
+      properties:
+        vulnerabilityId:
+          type: string
+          description: Common Vulnerability Enumeration, NIST-provided
+          format: 'string :: Common Vulnerability Enumeration, NIST-provided'
+        cpe:
+          type: array
+          description: Common Platform Enumeration (CPE), NIST-provided
+          format: 'array :: Common Platform Enumeration (CPE), NIST-provided'
+          items:
+            type: string
+            description: Common Platform Enumeration (CPE), NIST-provided
+        cwe:
+          type: array
+          description: Common Weakness Enumeration (CWE), NIST-provided
+          format: 'array :: Common Weakness Enumeration (CWE), NIST-provided'
+          items:
+            type: string
+            description: Common Weakness Enumeration (CWE), NIST-provided
+        addedDate:
+          type: string
+          description: Date added to NIST
+          format: 'string(date) :: Date added to NIST'
+        dateUpdated:
+          type: string
+          description: Date updated to NIST
+          format: 'string(date) :: Date updated to NIST'
+    GenericResponseCveToCpeMapping:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/CveToCpeMapping"
+        count:
+          type: integer
+          format: integer(int64)
+    CpeInformation:
+      type: object
+      properties:
+        productName:
+          type: string
+          description: Product name, associated with CPE
+          format: 'string :: Product name, associated with CPE'
+        version:
+          type: string
+          format: string
+        expectedNumberOfExploits:
+          type: number
+          description: Predicted number of exploits for the product as assessed for
+            the discovered vulnerabilities and computed cyRating for each
+          format: 'number :: Predicted number of exploits for the product as assessed
+            for the discovered vulnerabilities and computed cyRating for each'
+        vulnerabilityIds:
+          type: array
+          format: array
+          items:
+            type: string
+    GenericResponseCpeInformation:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/CpeInformation"
+        count:
+          type: integer
+          format: integer(int64)
+  securitySchemes:
+    userId:
+      type: apiKey
+      description: "(Required)"
+      name: userId
+      in: header
+    apiKey:
+      type: apiKey
+      description: "(Required)"
+      name: apiKey
+      in: header

@@ -1,0 +1,3825 @@
+---
+openapi: 3.0.1
+info:
+  title: CYR3CON_PR1ORITY
+  version: '530'
+servers:
+- url: https://dev.apigargoyle.com
+security:
+- userId: []
+  apiKey: []
+paths:
+  "/v1/account/login":
+    post:
+      tags:
+      - PRIORITY
+      description: authorizes user and returns apiKey required in all other endpoints
+      operationId: Login
+      parameters:
+      - name: userId
+        in: header
+        description: User ID for the cyr3con
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: header
+        description: Password for the cyr3con.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LoginResponse"
+      security: []
+  "/v1/account/reset-password":
+    post:
+      tags:
+      - PRIORITY
+      operationId: Reset Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/InitResetPasswordRequestDto"
+        required: true
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/change-password":
+    post:
+      tags:
+      - PRIORITY
+      operationId: Change Password
+      parameters:
+      - name: oldPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: newPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: confirmPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/logout":
+    post:
+      tags:
+      - PRIORITY
+      operationId: Logout
+      parameters:
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LogoutStatus"
+      security: []
+  "/v1/cpe-to-cves/mappings":
+    get:
+      tags:
+      - PRIORITY
+      operationId: CPE-to-CVE
+      parameters:
+      - name: cpe.product
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cpe.searchRegex
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cpe.productRegex
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cpe.fullVersion
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: vulnerabilityId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseCpeInformation"
+      security: []
+  "/v1/cve-to-cpes/mappings":
+    get:
+      tags:
+      - PRIORITY
+      description: To get the CPE groups corresponding to the a given CVE
+      operationId: CVE-to-CPE
+      parameters:
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date to which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: vulnerabilityId
+        in: query
+        description: Id for vulnerability
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: cpe
+        in: query
+        description: CPE
+        required: false
+        schema:
+          type: string
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseCveToCpeMapping"
+      security: []
+  "/v1/cves/{cve}/msbs/mappings":
+    get:
+      tags:
+      - PRIORITY
+      description: To get CVE from Msb mapping
+      operationId: CVE-to-MSB
+      parameters:
+      - name: cve
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseMsbCveMapping"
+      security: []
+  "/v1/fortify":
+    get:
+      tags:
+      - PRIORITY
+      description: To get a list of recommendations of the software version that is
+        free of the vulnerability or has a much lower risk score
+      operationId: Fortify Upgrades
+      parameters:
+      - name: cpe
+        in: query
+        description: CPE of the vulnerability
+        required: false
+        schema:
+          type: string
+      - name: vulnerabilityId
+        in: query
+        description: The ID of the vulnerability
+        required: false
+        schema:
+          type: string
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseFortify"
+      security: []
+  "/v1/metrics/cwe-cve":
+    get:
+      tags:
+      - PRIORITY
+      operationId: getCweCveMetrics
+      parameters:
+      - name: cwe
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/CweCveMetrics"
+      security: []
+  "/v1/mitre/tactics-to-cves/mappings":
+    get:
+      tags:
+      - PRIORITY
+      operationId: getTacticsToCvesMappings
+      parameters:
+      - name: tactics
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseTacticsTechniquesCveMapping"
+      security: []
+  "/v1/mitre/techniques-to-cves/mappings":
+    get:
+      tags:
+      - PRIORITY
+      operationId: getTechniquesToCvesMappings
+      parameters:
+      - name: techniques
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseTacticsTechniquesCveMapping"
+      security: []
+  "/v1/msbs/{msb}/cves/mappings":
+    get:
+      tags:
+      - PRIORITY
+      description: To get CVE ids from MSB
+      operationId: MSB-to-CVE
+      parameters:
+      - name: msb
+        in: path
+        description: Microsoft Bulletin number used as catalog index for Microsoft
+          vulnerabilities
+        required: true
+        schema:
+          type: string
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseMsbCveMapping"
+      security: []
+  "/v1/records/websites/rapid7":
+    get:
+      tags:
+      - PRIORITY
+      operationId: Rapid7 Websites Data
+      parameters:
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: contentId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: vulnerabilityId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseRapid7"
+      security: []
+  "/v1/records/websites/symantec":
+    get:
+      tags:
+      - PRIORITY
+      operationId: Symantec Websites Data
+      parameters:
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: contentId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: titleId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cve
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseSymantec"
+      security: []
+  "/v1/software-cpe":
+    get:
+      tags:
+      - PRIORITY
+      description: To get the essential info about the CPE, CWEs and CVEs.
+      operationId: getSoftwareCpeCve
+      parameters:
+      - name: cpe
+        in: query
+        description: CPE
+        required: false
+        schema:
+          type: string
+      - name: cwe
+        in: query
+        description: CWE
+        required: false
+        schema:
+          type: string
+      - name: vulnerabilityId
+        in: query
+        description: cve
+        required: false
+        schema:
+          type: string
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseSoftwareCpe"
+      security: []
+  "/v1/software-cpe/mappings/files":
+    post:
+      tags:
+      - PRIORITY
+      operationId: downloadSoftwareCpeCveMappings
+      parameters:
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/MultipartFileRequestDto"
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: byte
+      security: []
+  "/v1/vpn-info":
+    get:
+      tags:
+      - PRIORITY
+      description: To get the essential info about VPNs.
+      operationId: getVpnInfo
+      parameters:
+      - name: vpnName
+        in: query
+        description: VPN name
+        required: false
+        schema:
+          type: string
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseVpnInfo"
+      security: []
+  "/v1/vulnerabilities/essentials":
+    get:
+      tags:
+      - PRIORITY
+      description: To get the essential info about the CVE
+      operationId: getVulnerabilityEssentials
+      parameters:
+      - name: vulnerabilityId
+        in: query
+        description: The ID of the vulnerability
+        required: false
+        schema:
+          type: string
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseVulnerabilityEssentials"
+      security: []
+  "/v1/vulnerabilities/info":
+    get:
+      tags:
+      - PRIORITY
+      description: Get general vulnerability information about any item or post.
+      operationId: Vulnerability Info
+      parameters:
+      - name: severity
+        in: query
+        description: severity of info (can be critical, high, medium, important)
+        required: false
+        schema:
+          type: string
+      - name: indicator
+        in: query
+        description: this can be set to Item or Post.
+        required: false
+        schema:
+          type: string
+      - name: language
+        in: query
+        description: Language of the original content
+        required: false
+        schema:
+          type: string
+      - name: topicId
+        in: query
+        description: ID to search contents after particular record.
+        required: false
+        schema:
+          type: string
+      - name: topicName
+        in: query
+        description: name of a specific topic
+        required: false
+        schema:
+          type: string
+      - name: vulnerabilityId
+        in: query
+        description: vulnerabilityId of any info record
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: rapid7
+        in: query
+        description: boolean variable that decide whether to display data from rapid7
+          website or not.
+        required: false
+        schema:
+          type: boolean
+      - name: prEval
+        in: query
+        description: Boolean value to filter prEval records
+        required: false
+        schema:
+          type: boolean
+      - name: content
+        in: query
+        description: Used for content search over the content passed.
+        required: false
+        schema:
+          type: string
+      - name: enableFuzzy
+        in: query
+        description: If set to true, it will do the fuzzy search for the content being
+          passed.
+        required: false
+        schema:
+          type: boolean
+      - name: phraseSearch
+        in: query
+        description: phrase that needs to be searched in the text.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: pastDay
+        in: query
+        description: Boolean value to get data from past 5 days.
+        required: false
+        schema:
+          type: boolean
+      - name: getCount
+        in: query
+        description: Get result count.
+        required: false
+        schema:
+          type: boolean
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseVulnerabilityInfo"
+      security: []
+  "/v1/vulnerabilities/info/cves-by-cyrating":
+    get:
+      tags:
+      - PRIORITY
+      operationId: CVE-s by cy-Rating
+      parameters:
+      - name: vulnerabilityId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: cyRating
+        in: query
+        required: false
+        schema:
+          type: number
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseCvesByCyRatingProjection"
+      security: []
+  "/v1/vulnerabilities/rankings":
+    get:
+      tags:
+      - PRIORITY
+      operationId: Vulnerability Ranking
+      parameters:
+      - name: vulnerabilityId
+        in: query
+        description: vulnerabilityId of any vulnerability record
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: cyRating
+        in: query
+        description: filters data based on cyrating of vulnerabilities
+        required: false
+        schema:
+          type: number
+      - name: indicator
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: prEval
+        in: query
+        description: Boolean value to filter _prEval records.
+        required: false
+        schema:
+          type: boolean
+      - name: unknown
+        in: query
+        description: Boolean value to filter unknown AoE records.
+        required: false
+        schema:
+          type: boolean
+      - name: poc
+        in: query
+        description: Boolean value to filter AoE records where poc is available.
+        required: false
+        schema:
+          type: boolean
+      - name: code
+        in: query
+        description: Boolean value to filter AoE records where code snippet is available.
+        required: false
+        schema:
+          type: boolean
+      - name: pentest
+        in: query
+        description: Boolean value to filter AoE records of rapid7 type.
+        required: false
+        schema:
+          type: boolean
+      - name: eiw
+        in: query
+        description: Boolean value to filter AoE records where Exploit in the wild
+          is available.
+        required: false
+        schema:
+          type: boolean
+      - name: ipsSignatures
+        in: query
+        description: Boolean value to filter AoE records where Ip Signatures are available.
+        required: false
+        schema:
+          type: boolean
+      - name: description
+        in: query
+        description: Used for description search over the description passed.
+        required: false
+        schema:
+          type: string
+      - name: content
+        in: query
+        description: Used for content search over the content passed.
+        required: false
+        schema:
+          type: string
+      - name: enableFuzzy
+        in: query
+        description: If set to true, it will do the fuzzy search for the content being
+          passed.
+        required: false
+        schema:
+          type: boolean
+      - name: phraseSearch
+        in: query
+        description: phrase that needs to be searched in the text.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: entityEnabled
+        in: query
+        description: Boolean flag enables the display of entity field in the response
+        required: false
+        schema:
+          type: boolean
+      - name: softwareNlpTags
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: malcodeNlpTags
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: true
+        schema:
+          maximum: 50
+          minimum: 1
+          type: integer
+          format: int32
+      - name: entitiesLimit
+        in: query
+        description: Number of entities in each record to be retrieved.
+        required: true
+        schema:
+          maximum: 50
+          minimum: 1
+          type: integer
+          format: int32
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseVulnerabilityRankingStruct"
+      security: []
+  "/v1/vulnerabilities/rankings/cves/metadata":
+    get:
+      tags:
+      - PRIORITY
+      operationId: CVE Metadata
+      parameters:
+      - name: vulnerabilityId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseCveMetadata"
+      security: []
+  "/v1/vulnerabilities/rankings/low-base-score":
+    get:
+      tags:
+      - PRIORITY
+      operationId: Vulnerability Ranking - Low Base Score
+      parameters:
+      - name: vulnerabilityId
+        in: query
+        description: vulnerabilityId of any vulnerability record
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: cyRating
+        in: query
+        description: filters data based on cyrating of vulnerabilities
+        required: false
+        schema:
+          type: number
+      - name: indicator
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: prEval
+        in: query
+        description: Boolean value to filter _prEval records.
+        required: false
+        schema:
+          type: boolean
+      - name: unknown
+        in: query
+        description: Boolean value to filter unknown AoE records.
+        required: false
+        schema:
+          type: boolean
+      - name: poc
+        in: query
+        description: Boolean value to filter AoE records where poc is available.
+        required: false
+        schema:
+          type: boolean
+      - name: code
+        in: query
+        description: Boolean value to filter AoE records where code snippet is available.
+        required: false
+        schema:
+          type: boolean
+      - name: pentest
+        in: query
+        description: Boolean value to filter AoE records of rapid7 type.
+        required: false
+        schema:
+          type: boolean
+      - name: eiw
+        in: query
+        description: Boolean value to filter AoE records where Exploit in the wild
+          is available.
+        required: false
+        schema:
+          type: boolean
+      - name: ipsSignatures
+        in: query
+        description: Boolean value to filter AoE records where Ip Signatures are available.
+        required: false
+        schema:
+          type: boolean
+      - name: description
+        in: query
+        description: Used for description search over the description passed.
+        required: false
+        schema:
+          type: string
+      - name: content
+        in: query
+        description: Used for content search over the content passed.
+        required: false
+        schema:
+          type: string
+      - name: enableFuzzy
+        in: query
+        description: If set to true, it will do the fuzzy search for the content being
+          passed.
+        required: false
+        schema:
+          type: boolean
+      - name: phraseSearch
+        in: query
+        description: phrase that needs to be searched in the text.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: entityEnabled
+        in: query
+        description: Boolean flag enables the display of entity field in the response
+        required: false
+        schema:
+          type: boolean
+      - name: softwareNlpTags
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: malcodeNlpTags
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: true
+        schema:
+          maximum: 50
+          minimum: 1
+          type: integer
+          format: int32
+      - name: entitiesLimit
+        in: query
+        description: Number of entities in each record to be retrieved.
+        required: true
+        schema:
+          maximum: 50
+          minimum: 1
+          type: integer
+          format: int32
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseVulnerabilityRanking"
+      security: []
+  "/v1/vulnerabilities/rankings/recent":
+    get:
+      tags:
+      - PRIORITY
+      operationId: Vulnerability Ranking - Recent
+      parameters:
+      - name: vulnerabilityId
+        in: query
+        description: vulnerabilityId of any vulnerability record
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: cyRating
+        in: query
+        description: filters data based on cyrating of vulnerabilities
+        required: false
+        schema:
+          type: number
+      - name: indicator
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: prEval
+        in: query
+        description: Boolean value to filter _prEval records.
+        required: false
+        schema:
+          type: boolean
+      - name: unknown
+        in: query
+        description: Boolean value to filter unknown AoE records.
+        required: false
+        schema:
+          type: boolean
+      - name: poc
+        in: query
+        description: Boolean value to filter AoE records where poc is available.
+        required: false
+        schema:
+          type: boolean
+      - name: code
+        in: query
+        description: Boolean value to filter AoE records where code snippet is available.
+        required: false
+        schema:
+          type: boolean
+      - name: pentest
+        in: query
+        description: Boolean value to filter AoE records of rapid7 type.
+        required: false
+        schema:
+          type: boolean
+      - name: eiw
+        in: query
+        description: Boolean value to filter AoE records where Exploit in the wild
+          is available.
+        required: false
+        schema:
+          type: boolean
+      - name: ipsSignatures
+        in: query
+        description: Boolean value to filter AoE records where Ip Signatures are available.
+        required: false
+        schema:
+          type: boolean
+      - name: description
+        in: query
+        description: Used for description search over the description passed.
+        required: false
+        schema:
+          type: string
+      - name: content
+        in: query
+        description: Used for content search over the content passed.
+        required: false
+        schema:
+          type: string
+      - name: enableFuzzy
+        in: query
+        description: If set to true, it will do the fuzzy search for the content being
+          passed.
+        required: false
+        schema:
+          type: boolean
+      - name: phraseSearch
+        in: query
+        description: phrase that needs to be searched in the text.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: entityEnabled
+        in: query
+        description: Boolean flag enables the display of entity field in the response
+        required: false
+        schema:
+          type: boolean
+      - name: softwareNlpTags
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: malcodeNlpTags
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: true
+        schema:
+          maximum: 50
+          minimum: 1
+          type: integer
+          format: int32
+      - name: entitiesLimit
+        in: query
+        description: Number of entities in each record to be retrieved.
+        required: true
+        schema:
+          maximum: 50
+          minimum: 1
+          type: integer
+          format: int32
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseVulnerabilityRanking"
+      security: []
+  "/v1/vulnerabilities/rankings/top":
+    get:
+      tags:
+      - PRIORITY
+      operationId: Vulnerability Ranking - Top
+      parameters:
+      - name: vulnerabilityId
+        in: query
+        description: vulnerabilityId of any vulnerability record
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: cyRating
+        in: query
+        description: filters data based on cyrating of vulnerabilities
+        required: false
+        schema:
+          type: number
+      - name: indicator
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: prEval
+        in: query
+        description: Boolean value to filter _prEval records.
+        required: false
+        schema:
+          type: boolean
+      - name: unknown
+        in: query
+        description: Boolean value to filter unknown AoE records.
+        required: false
+        schema:
+          type: boolean
+      - name: poc
+        in: query
+        description: Boolean value to filter AoE records where poc is available.
+        required: false
+        schema:
+          type: boolean
+      - name: code
+        in: query
+        description: Boolean value to filter AoE records where code snippet is available.
+        required: false
+        schema:
+          type: boolean
+      - name: pentest
+        in: query
+        description: Boolean value to filter AoE records of rapid7 type.
+        required: false
+        schema:
+          type: boolean
+      - name: eiw
+        in: query
+        description: Boolean value to filter AoE records where Exploit in the wild
+          is available.
+        required: false
+        schema:
+          type: boolean
+      - name: ipsSignatures
+        in: query
+        description: Boolean value to filter AoE records where Ip Signatures are available.
+        required: false
+        schema:
+          type: boolean
+      - name: description
+        in: query
+        description: Used for description search over the description passed.
+        required: false
+        schema:
+          type: string
+      - name: content
+        in: query
+        description: Used for content search over the content passed.
+        required: false
+        schema:
+          type: string
+      - name: enableFuzzy
+        in: query
+        description: If set to true, it will do the fuzzy search for the content being
+          passed.
+        required: false
+        schema:
+          type: boolean
+      - name: phraseSearch
+        in: query
+        description: phrase that needs to be searched in the text.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: entityEnabled
+        in: query
+        description: Boolean flag enables the display of entity field in the response
+        required: false
+        schema:
+          type: boolean
+      - name: softwareNlpTags
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: malcodeNlpTags
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: true
+        schema:
+          maximum: 50
+          minimum: 1
+          type: integer
+          format: int32
+      - name: entitiesLimit
+        in: query
+        description: Number of entities in each record to be retrieved.
+        required: true
+        schema:
+          maximum: 50
+          minimum: 1
+          type: integer
+          format: int32
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseVulnerabilityRanking"
+      security: []
+  "/v1/vulnerabilities/rankings/{vulnerabilityId}/timeline":
+    get:
+      tags:
+      - PRIORITY
+      operationId: CVE Timeline
+      parameters:
+      - name: vulnerabilityId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: codeSnippet
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: pageable
+        in: query
+        required: true
+        schema:
+          "$ref": "#/components/schemas/Pageable"
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseCveTimeline"
+      security: []
+  "/v1/vulnerabilities/statistics":
+    get:
+      tags:
+      - PRIORITY
+      operationId: Vulnerability Statistics
+      parameters:
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: cve
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: task
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: aoe
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseVulnerabilityStatsModel"
+      security: []
+  "/v1/zeroday-products":
+    get:
+      tags:
+      - PRIORITY
+      description: Get a list of Zero Day Products vulnerabilities
+      operationId: ZeroDay Products
+      parameters:
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: pastDay
+        in: query
+        description: Boolean value to get data from past 5 days.
+        required: false
+        schema:
+          type: boolean
+      - name: content
+        in: query
+        description: Used for content search over the content passed.
+        required: false
+        schema:
+          type: string
+      - name: phraseSearch
+        in: query
+        description: phrase that needs to be searched in the text.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: recorded_date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseZeroDayProducts"
+      security: []
+components:
+  schemas:
+    MultipartFileRequestDto:
+      type: object
+      properties:
+        file:
+          type: string
+          format: string(binary)
+          writeOnly: true
+        filename:
+          type: string
+          format: string
+        inputStream:
+          type: object
+    InitResetPasswordRequestDto:
+      required:
+      - userId
+      type: object
+      properties:
+        userId:
+          type: string
+          format: string
+    AccountActionStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LogoutStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LoginResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          format: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        userId:
+          type: string
+          format: string
+        roles:
+          type: array
+          format: array
+          items:
+            type: string
+        uiFeatures:
+          type: array
+          format: array
+          items:
+            type: string
+        apiKey:
+          type: string
+          format: string(uuid)
+        apiKeyCreatedOn:
+          type: string
+          format: string(date-time)
+        apiKeyExpiresOn:
+          type: string
+          format: string(date-time)
+        changePassword:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        twoFactor:
+          type: boolean
+          format: boolean
+        lastActivityTime:
+          type: string
+          format: string(date-time)
+        privacyPolicyAcceptanceRequired:
+          type: boolean
+          format: boolean
+    GenericResponseZeroDayProducts:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/ZeroDayProducts"
+        count:
+          type: integer
+          format: integer(int64)
+    LocalTime:
+      type: object
+      properties:
+        hour:
+          type: integer
+          format: integer(int32)
+        minute:
+          type: integer
+          format: integer(int32)
+        second:
+          type: integer
+          format: integer(int32)
+        nano:
+          type: integer
+          format: integer(int32)
+    SellingPrice:
+      type: object
+      properties:
+        sellingPriceUsd:
+          type: number
+          description: price in USD price at which this item was sold
+          format: 'number :: price in USD price at which this item was sold'
+    ZeroDayProducts:
+      type: object
+      properties:
+        itemName:
+          type: string
+          format: string
+        oldItemId:
+          type: integer
+          format: integer(int32)
+        itemId:
+          type: string
+          format: string
+        oldMarketplaceId:
+          type: integer
+          format: integer(int32)
+        marketplaceId:
+          type: string
+          format: string
+        description:
+          type: string
+          format: string
+        language:
+          type: string
+          format: string
+        itemCategory:
+          type: string
+          format: string
+        sellingPriceUsd:
+          type: number
+          format: number
+        scrapedDate:
+          type: string
+          description: date entry was added to database
+          format: 'string(date) :: date entry was added to database'
+        scrapedTime:
+          "$ref": "#/components/schemas/LocalTime"
+        recordedDate:
+          type: string
+          description: posted date where available, scraped date where posted date
+            is unavailable
+          format: 'string(date) :: posted date where available, scraped date where
+            posted date is unavailable'
+        recordedTime:
+          "$ref": "#/components/schemas/LocalTime"
+        sellingPrice:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/SellingPrice"
+        score:
+          type: number
+          format: number
+        _score:
+          type: number
+          format: number
+    ChangeLogVulnerabilityStats:
+      type: object
+      properties:
+        featureSetDate:
+          type: string
+          format: string
+        cyRating:
+          type: string
+          format: string
+    GenericResponseVulnerabilityStatsModel:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/VulnerabilityStatsModel"
+        count:
+          type: integer
+          format: integer(int64)
+    VulnerabilityStatsModel:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+        task:
+          type: string
+          format: string
+        cve:
+          type: string
+          format: string
+        firstSeen:
+          type: string
+          format: string(date)
+        dateOfExploit:
+          type: string
+          format: string(date)
+        changeLogML:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/ChangeLogVulnerabilityStats"
+        AOE:
+          type: integer
+          format: integer(int32)
+    BaseMetricV2:
+      type: object
+      properties:
+        cvssV2:
+          "$ref": "#/components/schemas/CvssV2"
+        severity:
+          type: string
+          description: NIST-assessed criticality
+          format: 'string :: NIST-assessed criticality'
+        obtainUserPrivilege:
+          type: boolean
+          description: CVSS-component
+          format: 'boolean :: CVSS-component'
+        userInteractionRequired:
+          type: boolean
+          description: CVSS-component
+          format: 'boolean :: CVSS-component'
+        impactScore:
+          type: number
+          description: CVSS-component
+          format: 'number :: CVSS-component'
+        exploitabilityScore:
+          type: number
+          description: CVSS-component
+          format: 'number :: CVSS-component'
+        obtainOtherPrivilege:
+          type: boolean
+          description: CVSS-component
+          format: 'boolean :: CVSS-component'
+        obtainAllPrivilege:
+          type: boolean
+          description: CVSS-component
+          format: 'boolean :: CVSS-component'
+    BaseMetricV3:
+      type: object
+      properties:
+        cvssV3:
+          "$ref": "#/components/schemas/CvssV3"
+        impactScore:
+          type: number
+          format: number
+        exploitabilityScore:
+          type: number
+          format: number
+    ChangeLog:
+      type: object
+      properties:
+        type:
+          type: string
+          description: What caused changes in cyrating.
+          format: 'string :: What caused changes in cyrating.'
+        date:
+          type: string
+          description: When the changes were made.
+          format: 'string(date) :: When the changes were made.'
+        cyRating:
+          type: number
+          format: number
+        probability:
+          type: number
+          description: Probability of cve getting exploited as predicted by our model.
+          format: 'number :: Probability of cve getting exploited as predicted by
+            our model.'
+      description: changes made in the cyrating between CVE first discovered and last
+        update.
+    CvssV2:
+      type: object
+      properties:
+        vectorString:
+          type: string
+          description: CVSS encoding of component vectors
+          format: 'string :: CVSS encoding of component vectors'
+        baseScore:
+          type: number
+          description: NIST-asigned severity score
+          format: 'number :: NIST-asigned severity score'
+        availabilityImpact:
+          type: string
+          description: CVSS-component
+          format: 'string :: CVSS-component'
+        authentication:
+          type: string
+          description: CVSS-component
+          format: 'string :: CVSS-component'
+        version:
+          type: string
+          description: CVSS v2
+          format: 'string :: CVSS v2'
+        accessComplexity:
+          type: string
+          description: CVSS-component
+          format: 'string :: CVSS-component'
+        integrityImpact:
+          type: string
+          description: CVSS-component
+          format: 'string :: CVSS-component'
+        confidentialityImpact:
+          type: string
+          description: CVSS-component
+          format: 'string :: CVSS-component'
+        accessVector:
+          type: string
+          description: CVSS-component
+          format: 'string :: CVSS-component'
+      description: NIST's CVSS v2-score (https://nvd.nist.gov/vuln-metrics/cvss/v2-calculator?name=CVE-2019-9659&vector=(AV:N/AC:L/Au:N/C:N/I:P/A:P))
+    CvssV3:
+      type: object
+      properties:
+        vectorString:
+          type: string
+          format: string
+        attackComplexity:
+          type: string
+          format: string
+        attackVector:
+          type: string
+          format: string
+        privilegesRequired:
+          type: string
+          format: string
+        baseSeverity:
+          type: string
+          format: string
+        userInteraction:
+          type: string
+          format: string
+        baseScore:
+          type: number
+          format: number
+        availabilityImpact:
+          type: string
+          format: string
+        version:
+          type: string
+          format: string
+        scope:
+          type: string
+          format: string
+        integrityImpact:
+          type: string
+          format: string
+        confidentialityImpact:
+          type: string
+          format: string
+    GenericResponseVulnerabilityRankingStruct:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/VulnerabilityRankingStruct"
+        count:
+          type: integer
+          format: integer(int64)
+    MalcodeNlpTags:
+      type: object
+      properties:
+        attack:
+          type: array
+          format: array
+          items:
+            type: string
+    SoftwareNlpTags:
+      type: object
+      properties:
+        software:
+          type: array
+          format: array
+          items:
+            type: string
+    VulnerabilityRanking:
+      type: object
+      properties:
+        vulnerabilityId:
+          type: string
+          description: cve ID
+          format: 'string :: cve ID'
+        cyRating:
+          type: number
+          description: Rating in terms of likeliness of exploit predicted by our model.
+          format: 'number :: Rating in terms of likeliness of exploit predicted by
+            our model.'
+        numberOfUniqueMentions:
+          type: number
+          description: Non-duplicate number of individual posts in hacker discussions
+            mentioning the CVE
+          format: 'number(double) :: Non-duplicate number of individual posts in hacker
+            discussions mentioning the CVE'
+        numberOfMentions:
+          type: number
+          description: Total number of mentions of a CVE in hacker discussions
+          format: 'number(double) :: Total number of mentions of a CVE in hacker discussions'
+        firstSeen:
+          type: string
+          description: Date when CVE was first mentioned in posts.
+          format: 'string(date) :: Date when CVE was first mentioned in posts.'
+        lastSeen:
+          type: string
+          description: Date when CVE was last mentioned in posts.
+          format: 'string(date) :: Date when CVE was last mentioned in posts.'
+        exploitDate:
+          type: string
+          format: string(date)
+        description:
+          type: string
+          description: Description about the CVE
+          format: 'string :: Description about the CVE'
+        entities:
+          type: array
+          description: List of posts with recorded date and website mentions
+          format: 'array :: List of posts with recorded date and website mentions'
+          items:
+            "$ref": "#/components/schemas/VulnerabilityRankingEntity"
+        link:
+          type: array
+          description: List of links where cve details can be found.
+          format: 'array :: List of links where cve details can be found.'
+          items:
+            type: string
+            description: List of links where cve details can be found.
+        severity:
+          type: string
+          format: string
+        hasPrice:
+          type: boolean
+          description: Boolean indicator, true when product on marketplace has price
+            listed.
+          format: 'boolean :: Boolean indicator, true when product on marketplace
+            has price listed.'
+        sellingPriceList:
+          type: array
+          format: array
+          items:
+            type: number
+        avgPrice:
+          type: number
+          format: number(double)
+        nistReleaseDate:
+          type: string
+          description: Date when cve details were released on NIST website.
+          format: 'string(date) :: Date when cve details were released on NIST website.'
+        nistLastRevisedDate:
+          type: string
+          description: Latest update date for CVE on NIST website.
+          format: 'string(date) :: Latest update date for CVE on NIST website.'
+        availabilityOfExploit:
+          type: 'object :: Indicators of whether Code Snippets, Pentest Framework,
+            Exploit mentions in posts'
+          additionalProperties:
+            type: array
+            description: Indicators of whether Code Snippets, Pentest Framework, Exploit
+              mentions in posts
+            items:
+              type: string
+              description: Indicators of whether Code Snippets, Pentest Framework,
+                Exploit mentions in posts
+          description: Indicators of whether Code Snippets, Pentest Framework, Exploit
+            mentions in posts
+        availabilityOfPatch:
+          type: 'object :: Whether the patch is available and link to patch.'
+          additionalProperties:
+            type: array
+            description: Whether the patch is available and link to patch.
+            items:
+              type: string
+              description: Whether the patch is available and link to patch.
+          description: Whether the patch is available and link to patch.
+        changeLog:
+          type: array
+          description: changes made in the cyrating between CVE first discovered and
+            last update.
+          format: 'array :: changes made in the cyrating between CVE first discovered
+            and last update.'
+          items:
+            "$ref": "#/components/schemas/ChangeLog"
+        languages:
+          type: array
+          format: array
+          items:
+            type: string
+        noOfLanguages:
+          type: integer
+          format: integer(int32)
+        uids:
+          type: array
+          format: array
+          items:
+            type: string
+        noOfUsers:
+          type: integer
+          format: integer(int32)
+        dateRatingLastChanged:
+          type: string
+          description: Date when the cyrating last changed.
+          format: 'string(date) :: Date when the cyrating last changed.'
+        forumId:
+          type: integer
+          format: integer(int32)
+        userId:
+          type: integer
+          format: integer(int32)
+        movingAverage:
+          type: integer
+          description: Indicates popularity of the CVE in the past 7 days
+          format: 'integer(int32) :: Indicates popularity of the CVE in the past 7
+            days'
+        cpe:
+          type: array
+          description: List of cpe's affected if this cve is exploited.
+          format: 'array :: List of cpe''s affected if this cve is exploited.'
+          items:
+            type: string
+            description: List of cpe's affected if this cve is exploited.
+        pocPacketStorm:
+          type: boolean
+          format: boolean
+        pocExploitDb:
+          type: boolean
+          format: boolean
+        discussed:
+          type: boolean
+          description: Boolean flag that identify if cve is discussed in hacker forums.
+          format: 'boolean :: Boolean flag that identify if cve is discussed in hacker
+            forums.'
+        codeSnippet:
+          type: boolean
+          description: Boolean flag that identify if any code present in posts.
+          format: 'boolean :: Boolean flag that identify if any code present in posts.'
+        pentestAvailable:
+          type: boolean
+          format: boolean
+        cvss2BaseScore:
+          type: number
+          format: number
+        cvss3BaseScore:
+          type: number
+          format: number
+        prEval:
+          type: boolean
+          description: Boolean flag that identify cve is threat predicted by our model
+          format: 'boolean :: Boolean flag that identify cve is threat predicted by
+            our model'
+        probability:
+          type: number
+          description: Probability with which model identified it as threat.
+          format: 'number :: Probability with which model identified it as threat.'
+        mappedVulnerabilityId:
+          type: string
+          format: string
+        score:
+          type: number
+          format: number
+        baseMetricV2:
+          "$ref": "#/components/schemas/BaseMetricV2"
+        baseMetricV3:
+          "$ref": "#/components/schemas/BaseMetricV3"
+    VulnerabilityRankingEntity:
+      type: object
+      properties:
+        autoTranslated:
+          type: boolean
+          description: Boolean indicator determines if content is translated automatically
+            or not
+          format: 'boolean :: Boolean indicator determines if content is translated
+            automatically or not'
+        indicator:
+          type: string
+          description: It can either be post or social media mention or White Hat
+            mentions
+          format: 'string :: It can either be post or social media mention or White
+            Hat mentions'
+        recordedDate:
+          type: string
+          description: Date when post was posted.
+          format: 'string(date) :: Date when post was posted.'
+        featureSetDate:
+          type: string
+          description: Date when the feature set of model created for this CVE to
+            calculate cyRating.
+          format: 'string(date) :: Date when the feature set of model created for
+            this CVE to calculate cyRating.'
+        content:
+          type: string
+          description: Content of post.
+          format: 'string :: Content of post.'
+        oldUid:
+          type: integer
+          format: integer(int32)
+        sellingPrice:
+          type: number
+          format: number
+        language:
+          type: string
+          description: If autotranslated is true, the original language in which post
+            was posted.
+          format: 'string :: If autotranslated is true, the original language in which
+            post was posted.'
+        oldWebsiteId:
+          type: integer
+          description: Integer ID of the website where post was posted.
+          format: 'integer(int32) :: Integer ID of the website where post was posted.'
+        oldTopicId:
+          type: integer
+          format: integer(int32)
+        userIntId:
+          type: integer
+          description: if the indicator is Post, the Id of the user who posted the
+            post.
+          format: 'integer(int32) :: if the indicator is Post, the Id of the user
+            who posted the post.'
+        topicName:
+          type: string
+          description: Name of the topic of discussion on that website.
+          format: 'string :: Name of the topic of discussion on that website.'
+        uid:
+          type: string
+          format: string
+        topicId:
+          type: string
+          format: string
+        websiteId:
+          type: integer
+          format: integer(int32)
+        softwareNlpTags:
+          type: array
+          format: array
+          items:
+            type: string
+        malcodeNlpTags:
+          type: array
+          format: array
+          items:
+            type: string
+        originalText:
+          type: string
+          format: string
+        Software_NLP_tags:
+          "$ref": "#/components/schemas/SoftwareNlpTags"
+        Malcode_NLP_tags:
+          "$ref": "#/components/schemas/MalcodeNlpTags"
+      description: List of posts with recorded date and website mentions
+    VulnerabilityRankingStruct:
+      type: object
+      properties:
+        recent30:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/VulnerabilityRanking"
+        top30:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/VulnerabilityRanking"
+        lowBaseScore:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/VulnerabilityRanking"
+        cve:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/VulnerabilityRanking"
+    PageRequestObject:
+      type: object
+      properties:
+        sort:
+          "$ref": "#/components/schemas/Sort"
+        pageNumber:
+          type: integer
+          format: integer(int32)
+        pageSize:
+          type: integer
+          format: integer(int32)
+        offset:
+          type: integer
+          format: integer(int64)
+        paged:
+          type: boolean
+          format: boolean
+        unpaged:
+          type: boolean
+          format: boolean
+    Pageable:
+      required:
+      - start
+      type: object
+      properties:
+        start:
+          minimum: 0
+          type: integer
+          format: integer(int32)
+        limit:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          format: integer(int32)
+        pageRequest:
+          "$ref": "#/components/schemas/PageRequestObject"
+    Sort:
+      type: object
+      properties:
+        sorted:
+          type: boolean
+          format: boolean
+        unsorted:
+          type: boolean
+          format: boolean
+        empty:
+          type: boolean
+          format: boolean
+    CveTimeline:
+      type: object
+      properties:
+        indicator:
+          type: string
+          format: string
+        type:
+          type: string
+          format: string
+        recordedDate:
+          type: string
+          format: string
+        featureSetDate:
+          type: string
+          format: string(date)
+        content:
+          type: string
+          format: string
+        exploitUrls:
+          type: array
+          format: array
+          items:
+            type: string
+        pageUrl:
+          type: string
+          format: string
+        oldUid:
+          type: integer
+          format: integer(int32)
+        sellingPrice:
+          type: number
+          format: number
+        language:
+          type: string
+          format: string
+        oldWebsiteId:
+          type: integer
+          format: integer(int32)
+        oldTopicId:
+          type: integer
+          format: integer(int32)
+        userIntId:
+          type: integer
+          format: integer(int32)
+        topicName:
+          type: string
+          format: string
+        uid:
+          type: string
+          format: string
+        topicId:
+          type: string
+          format: string
+        websiteId:
+          type: integer
+          format: integer(int32)
+        websiteName:
+          type: string
+          format: string
+        codeSnippet:
+          type: boolean
+          format: boolean
+        originalText:
+          type: string
+          format: string
+        autoTranslated:
+          type: boolean
+          format: boolean
+    GenericResponseCveTimeline:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/CveTimeline"
+        count:
+          type: integer
+          format: integer(int64)
+    GenericResponseVulnerabilityRanking:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/VulnerabilityRanking"
+        count:
+          type: integer
+          format: integer(int64)
+    CveMetadata:
+      type: object
+      properties:
+        vulnerabilityId:
+          type: string
+          format: string
+        cyRating:
+          type: number
+          format: number
+        exploitDate:
+          type: string
+          format: string(date)
+        websiteIds:
+          type: array
+          format: array
+          items:
+            type: integer
+            format: int32
+    GenericResponseCveMetadata:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/CveMetadata"
+        count:
+          type: integer
+          format: integer(int64)
+    GenericResponseVulnerabilityInfo:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/VulnerabilityInfo"
+        count:
+          type: integer
+          format: integer(int64)
+    VulnerabilityInfo:
+      type: object
+      properties:
+        availabilityOfPatch:
+          type: object
+          additionalProperties:
+            type: array
+            items:
+              type: string
+        vulnerabilityId:
+          type: string
+          format: string
+        indicator:
+          type: string
+          description: 'Type of entry; possible values: post, item, social media'
+          format: 'string :: Type of entry; possible values: post, item, social media'
+        scrapedDate:
+          type: string
+          description: Date when entry was collected
+          format: 'string(date) :: Date when entry was collected'
+        topicId:
+          type: string
+          format: string
+        recordedDate:
+          type: string
+          description: Posted date where available, otherwise scraped date
+          format: 'string(date) :: Posted date where available, otherwise scraped
+            date'
+        language:
+          type: string
+          format: string
+        addedDate:
+          type: string
+          format: string(date)
+        softwareTags:
+          type: array
+          format: array
+          items:
+            type: string
+        financialTags:
+          type: array
+          format: array
+          items:
+            type: string
+        lastSeen:
+          type: string
+          description: Most recent recorded date of an entry mentioning the vulnerability
+          format: 'string(date) :: Most recent recorded date of an entry mentioning
+            the vulnerability'
+        firstSeen:
+          type: string
+          description: Oldest recorded date of an entry mentioning the vulnerability
+          format: 'string(date) :: Oldest recorded date of an entry mentioning the
+            vulnerability'
+        postedDate:
+          type: string
+          format: string(date)
+        sellingPriceUsd:
+          type: number
+          format: number
+        cyRating:
+          type: number
+          description: relative likelihood of exploitation compared to baseline (non-rated
+            vulnerabilities)
+          format: 'number :: relative likelihood of exploitation compared to baseline
+            (non-rated vulnerabilities)'
+        discussed:
+          type: boolean
+          format: boolean
+        numberOfUniqueMentions:
+          type: string
+          format: string
+        numberMentionsPastMonth:
+          type: integer
+          format: integer(int32)
+        availabilityOfExploit:
+          type: 'object :: Range of values indicating type of known available malware
+            exploiting the vulnerability; possible values: 0 = no exploit known to
+            be available, 1 = Proof-of-Concept posted on ExploitDB, 2 = Code shared
+            or offered for sale and associated with the vulnerability, 3 = pentester
+            framework module integrated addressing this vulnerability, 4 = exploit-in-the-wild
+            found.'
+          additionalProperties:
+            type: array
+            description: 'Range of values indicating type of known available malware
+              exploiting the vulnerability; possible values: 0 = no exploit known
+              to be available, 1 = Proof-of-Concept posted on ExploitDB, 2 = Code
+              shared or offered for sale and associated with the vulnerability, 3
+              = pentester framework module integrated addressing this vulnerability,
+              4 = exploit-in-the-wild found.'
+            items:
+              type: string
+              description: 'Range of values indicating type of known available malware
+                exploiting the vulnerability; possible values: 0 = no exploit known
+                to be available, 1 = Proof-of-Concept posted on ExploitDB, 2 = Code
+                shared or offered for sale and associated with the vulnerability,
+                3 = pentester framework module integrated addressing this vulnerability,
+                4 = exploit-in-the-wild found.'
+          description: 'Range of values indicating type of known available malware
+            exploiting the vulnerability; possible values: 0 = no exploit known to
+            be available, 1 = Proof-of-Concept posted on ExploitDB, 2 = Code shared
+            or offered for sale and associated with the vulnerability, 3 = pentester
+            framework module integrated addressing this vulnerability, 4 = exploit-in-the-wild
+            found.'
+        isWormable:
+          type: integer
+          description: Vulnerability is known to allow self-propagation, i.e. no interaction
+            on the side of the legitimate system user is needed to distribute and/or
+            execute the malware
+          format: 'integer(int32) :: Vulnerability is known to allow self-propagation,
+            i.e. no interaction on the side of the legitimate system user is needed
+            to distribute and/or execute the malware'
+        changeLog:
+          type: array
+          description: historical log of cyRatings
+          format: 'array :: historical log of cyRatings'
+          items:
+            "$ref": "#/components/schemas/ChangeLog"
+        topicName:
+          type: string
+          format: string
+        languages:
+          type: array
+          format: array
+          items:
+            type: string
+        noOfLanguages:
+          type: integer
+          format: integer(int32)
+        uids:
+          type: array
+          format: array
+          items:
+            type: string
+        noOfUsers:
+          type: integer
+          format: integer(int32)
+        dateRatingLastChanged:
+          type: string
+          description: most recent change to cyRating logged on this date
+          format: 'string(date) :: most recent change to cyRating logged on this date'
+        websiteId:
+          type: integer
+          format: integer(int32)
+        userId:
+          type: integer
+          format: integer(int32)
+        movingAverage:
+          type: integer
+          description: Average number of mentioned within the past seven days compared
+            to total number of mentions of the vulnerability over the past month.
+            This is used to detect renewed interest/discussion involving the CVE.
+          format: 'integer(int32) :: Average number of mentioned within the past seven
+            days compared to total number of mentions of the vulnerability over the
+            past month. This is used to detect renewed interest/discussion involving
+            the CVE.'
+        prEval:
+          type: boolean
+          format: boolean
+        pocPacketStorm:
+          type: boolean
+          format: boolean
+        codeSnippet:
+          type: boolean
+          format: boolean
+        pentestAvailable:
+          type: boolean
+          format: boolean
+        baseMetricV2:
+          "$ref": "#/components/schemas/BaseMetricV2"
+        baseMetricV3:
+          "$ref": "#/components/schemas/BaseMetricV3"
+        cpe:
+          type: array
+          format: array
+          items:
+            type: string
+        autoTranslated:
+          type: boolean
+          format: boolean
+        nistLastRevisedDate:
+          type: string
+          format: string(date)
+        nistReleaseDate:
+          type: string
+          format: string(date)
+        forumsId:
+          type: integer
+          format: integer(int32)
+        marketPlaceId:
+          type: integer
+          format: integer(int32)
+        nistSeverity:
+          type: string
+          format: string
+        description:
+          type: string
+          description: NIST's description of the vulnerability
+          format: 'string :: NIST''s description of the vulnerability'
+        impact:
+          type: string
+          format: string
+        nistSeverityNum:
+          type: string
+          format: string
+        link:
+          type: array
+          description: links of interest to cybersecurity websites
+          format: 'array :: links of interest to cybersecurity websites'
+          items:
+            type: string
+            description: links of interest to cybersecurity websites
+        releaseDate:
+          type: string
+          format: string
+        itemName:
+          type: string
+          format: string
+        itemDescription:
+          type: string
+          format: string
+        probability:
+          type: number
+          format: number
+        mappedVulnerabilityId:
+          type: string
+          format: string
+        score:
+          type: number
+          format: number
+        _score:
+          type: number
+          format: number
+    VulnerabilityInfoEmbedded:
+      type: object
+      properties:
+        severity:
+          type: string
+          format: string
+        description:
+          type: string
+          format: string
+        impact:
+          type: string
+          format: string
+        ratingNumber:
+          type: string
+          format: string
+        vulnerabilityId:
+          type: string
+          format: string
+        cpe:
+          type: array
+          format: array
+          items:
+            type: string
+        link:
+          type: array
+          format: array
+          items:
+            type: string
+        releaseDate:
+          type: string
+          format: string
+        nistLastRevisedDate:
+          type: string
+          format: string(date)
+        disclosedDate:
+          type: string
+          format: string(date)
+        cwe:
+          type: array
+          format: array
+          items:
+            type: string
+        baseMetricV2:
+          "$ref": "#/components/schemas/BaseMetricV2"
+        baseMetricV3:
+          "$ref": "#/components/schemas/BaseMetricV3"
+    CveInformationByCyRatingDetails:
+      type: object
+      properties:
+        vulnerabilityId:
+          type: string
+          format: string
+        cvssScore:
+          type: number
+          description: NIST's CVSS v2 score
+          format: 'number :: NIST''s CVSS v2 score'
+      description: list of vulnerabilities currently assessed at the above cyRating
+    CvesByCyRatingProjection:
+      type: object
+      properties:
+        cyRating:
+          type: number
+          description: relative likelihood of exploitation compared to base rate (non-mentioned
+            vulnerabilities)
+          format: 'number :: relative likelihood of exploitation compared to base
+            rate (non-mentioned vulnerabilities)'
+        vulnerabilityIds:
+          type: array
+          description: list of vulnerabilities currently assessed at the above cyRating
+          format: 'array :: list of vulnerabilities currently assessed at the above
+            cyRating'
+          items:
+            "$ref": "#/components/schemas/CveInformationByCyRatingDetails"
+    GenericResponseCvesByCyRatingProjection:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/CvesByCyRatingProjection"
+        count:
+          type: integer
+          format: integer(int64)
+    GenericResponseVulnerabilityEssentials:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/VulnerabilityEssentials"
+        count:
+          type: integer
+          format: integer(int64)
+    VulnerabilityEssentials:
+      type: object
+      properties:
+        vulnerabilityId:
+          type: string
+          format: string
+        smCount:
+          type: integer
+          format: integer(int32)
+        rmtFirstSeen:
+          type: string
+          format: string(date)
+        rmtLastSeen:
+          type: string
+          format: string(date)
+        rmtUserCount:
+          type: integer
+          format: integer(int32)
+        rmtWebsiteCount:
+          type: integer
+          format: integer(int32)
+        arabicCount:
+          type: integer
+          format: integer(int32)
+        chineseCount:
+          type: integer
+          format: integer(int32)
+        englishCount:
+          type: integer
+          format: integer(int32)
+        russianCount:
+          type: integer
+          format: integer(int32)
+    GenericResponseVpnInfo:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/VpnInfo"
+        count:
+          type: integer
+          format: integer(int64)
+    VpnInfo:
+      type: object
+      properties:
+        dates:
+          type: array
+          format: array
+          items:
+            type: string
+            format: date
+        vulnerabilityId:
+          type: string
+          format: string
+        vpnName:
+          type: string
+          format: string
+        cyRating:
+          type: number
+          format: number
+    CveDetails:
+      type: object
+      properties:
+        cve:
+          type: string
+          format: string
+        cyRating:
+          type: number
+          format: number
+        lastSeen:
+          type: string
+          format: string(date)
+    CweDetails:
+      type: object
+      properties:
+        cwe:
+          type: string
+          format: string
+        lastSeen:
+          type: string
+          format: string
+    GenericResponseSoftwareCpe:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/SoftwareCpe"
+        count:
+          type: integer
+          format: integer(int64)
+    SoftwareCpe:
+      type: object
+      properties:
+        cpe:
+          type: array
+          format: array
+          items:
+            type: string
+        cwes:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/CweDetails"
+        vulnerabilityIds:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/CveDetails"
+        specification:
+          type: string
+          format: string
+        fullName:
+          type: string
+          format: string
+        vendorName:
+          type: string
+          format: string
+        productName:
+          type: string
+          format: string
+        versionNumber:
+          type: string
+          format: string
+    GenericResponseSymantec:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/Symantec"
+        count:
+          type: integer
+          format: integer(int64)
+    Symantec:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+        vendorResponse:
+          type: string
+          format: string
+        contentId:
+          type: string
+          format: string
+        affectedVendors:
+          type: string
+          format: string
+        severity:
+          type: string
+          format: string
+        title:
+          type: string
+          format: string
+        titleId:
+          type: string
+          format: string
+        scrapedDate:
+          type: string
+          format: string(date)
+        vulnerabilityId:
+          type: string
+          format: string
+        content:
+          type: string
+          format: string
+        websiteId:
+          type: integer
+          format: integer(int32)
+        websiteName:
+          type: string
+          format: string
+        possibleSolution:
+          type: string
+          format: string
+        recordedDate:
+          type: string
+          format: string(date)
+        pageUrl:
+          type: string
+          format: string
+    GenericResponseRapid7:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/Rapid7"
+        count:
+          type: integer
+          format: integer(int64)
+    Rapid7:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+        websiteName:
+          type: string
+          format: string
+        websiteCategory:
+          type: string
+          format: string
+        postedDate:
+          type: string
+          format: string(date)
+        title:
+          type: string
+          format: string
+        recordedDate:
+          type: string
+          format: string(date)
+        vulnerabilityId:
+          type: string
+          format: string
+        content:
+          type: string
+          format: string
+        contentId:
+          type: string
+          format: string
+        scrapedDate:
+          type: string
+          format: string(date)
+        websiteId:
+          type: integer
+          format: integer(int64)
+        reliability:
+          type: string
+          format: string
+        userName:
+          type: string
+          format: string
+        platform:
+          type: string
+          format: string
+        sourceCode:
+          type: string
+          format: string
+        pageUrl:
+          type: string
+          format: string
+    GenericResponseMsbCveMapping:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/MsbCveMapping"
+        count:
+          type: integer
+          format: integer(int64)
+    MsbCveMapping:
+      type: object
+      properties:
+        impact:
+          type: string
+          description: Resulting attack impact of the vulnerability, NIST-assessed
+          format: 'string :: Resulting attack impact of the vulnerability, NIST-assessed'
+        severity:
+          type: string
+          description: NIST-assessed criticality of the vulnerability
+          format: 'string :: NIST-assessed criticality of the vulnerability'
+        topicsName:
+          type: string
+          description: title of bulletin for the vulnerability
+          format: 'string :: title of bulletin for the vulnerability'
+        affectedProducts:
+          type: array
+          description: affected software
+          format: 'array :: affected software'
+          items:
+            type: string
+            description: affected software
+        date:
+          type: string
+          description: date entry posted
+          format: 'string :: date entry posted'
+        msb:
+          type: string
+          description: Microsoft Bulletin number
+          format: 'string :: Microsoft Bulletin number'
+        vulnerabilityIds:
+          type: array
+          description: NIST's Common Vulnerability Enumeration catalogue-IDs
+          format: 'array :: NIST''s Common Vulnerability Enumeration catalogue-IDs'
+          items:
+            type: string
+            description: NIST's Common Vulnerability Enumeration catalogue-IDs
+        vulnerabilityId:
+          type: string
+          description: NIST's Common Vulnerability Enumeration catalogue-ID
+          format: 'string :: NIST''s Common Vulnerability Enumeration catalogue-ID'
+    GenericResponseTacticsTechniquesCveMapping:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/TacticsTechniquesCveMapping"
+        count:
+          type: integer
+          format: integer(int64)
+    TacticsTechniquesCveMapping:
+      type: object
+      properties:
+        vulnerabilityId:
+          type: string
+          format: string
+        cyRating:
+          type: string
+          format: string
+        description:
+          type: string
+          format: string
+    CvePerCweMetrics:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: integer(int64)
+        totalInPastThreeMonths:
+          type: integer
+          format: integer(int64)
+        totalWithMaxCyRating:
+          type: integer
+          format: integer(int64)
+        totalWithCyRatingBetween20And38:
+          type: integer
+          format: integer(int64)
+    CweCveInfo:
+      type: object
+      properties:
+        vulnerabilityId:
+          type: string
+          format: string
+        description:
+          type: string
+          format: string
+        cyRating:
+          type: number
+          format: number
+        firstSeen:
+          type: string
+          format: string(date)
+        lastSeen:
+          type: string
+          format: string(date)
+        nistReleaseDate:
+          type: string
+          format: string(date)
+        malcodeNlpTags:
+          type: array
+          format: array
+          items:
+            type: string
+    CweCveMetrics:
+      type: object
+      properties:
+        cvePerCweMetrics:
+          "$ref": "#/components/schemas/CvePerCweMetrics"
+        mentionsOrRecordsMetrics:
+          "$ref": "#/components/schemas/MentionsOrRecordsMetrics"
+        mitreAttackTacticsAndTechniquesMetrics:
+          "$ref": "#/components/schemas/MitreAttackTacticsAndTechniquesMetrics"
+    MentionsOrRecordsMetrics:
+      type: object
+      properties:
+        total:
+          type: integer
+          format: integer(int64)
+        totalInPastThreeMonths:
+          type: integer
+          format: integer(int64)
+        tenMostRecent:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/CweCveInfo"
+        malcodeNlpTags:
+          type: object
+          additionalProperties:
+            type: integer
+            format: int64
+    MitreAttackTacticsAndTechniquesMetrics:
+      type: object
+      properties:
+        totalTactics:
+          type: integer
+          format: integer(int64)
+        tactics:
+          uniqueItems: true
+          type: array
+          format: array
+          items:
+            type: string
+        totalTechniques:
+          type: integer
+          format: integer(int64)
+        techniques:
+          uniqueItems: true
+          type: array
+          format: array
+          items:
+            type: string
+        procedures:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/Procedure"
+    Procedure:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+        name:
+          type: string
+          format: string
+        description:
+          type: string
+          format: string
+    Fortify:
+      type: object
+      properties:
+        vulnerabilityId:
+          type: string
+          format: string
+        minimumCpeUpgrades:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/FortifyMinUpgrades"
+    FortifyMinUpgrades:
+      type: object
+      properties:
+        cpeLabel:
+          type: string
+          format: string
+        productName:
+          type: string
+          format: string
+        impactScore:
+          type: integer
+          format: integer(int32)
+    GenericResponseFortify:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/Fortify"
+        count:
+          type: integer
+          format: integer(int64)
+    CveToCpeMapping:
+      type: object
+      properties:
+        vulnerabilityId:
+          type: string
+          description: Common Vulnerability Enumeration, NIST-provided
+          format: 'string :: Common Vulnerability Enumeration, NIST-provided'
+        cpe:
+          type: array
+          description: Common Platform Enumeration (CPE), NIST-provided
+          format: 'array :: Common Platform Enumeration (CPE), NIST-provided'
+          items:
+            type: string
+            description: Common Platform Enumeration (CPE), NIST-provided
+        cwe:
+          type: array
+          description: Common Weakness Enumeration (CWE), NIST-provided
+          format: 'array :: Common Weakness Enumeration (CWE), NIST-provided'
+          items:
+            type: string
+            description: Common Weakness Enumeration (CWE), NIST-provided
+        addedDate:
+          type: string
+          description: Date added to NIST
+          format: 'string(date) :: Date added to NIST'
+        dateUpdated:
+          type: string
+          description: Date updated to NIST
+          format: 'string(date) :: Date updated to NIST'
+    GenericResponseCveToCpeMapping:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/CveToCpeMapping"
+        count:
+          type: integer
+          format: integer(int64)
+    CpeInformation:
+      type: object
+      properties:
+        productName:
+          type: string
+          description: Product name, associated with CPE
+          format: 'string :: Product name, associated with CPE'
+        version:
+          type: string
+          format: string
+        expectedNumberOfExploits:
+          type: number
+          description: Predicted number of exploits for the product as assessed for
+            the discovered vulnerabilities and computed cyRating for each
+          format: 'number :: Predicted number of exploits for the product as assessed
+            for the discovered vulnerabilities and computed cyRating for each'
+        vulnerabilityIds:
+          type: array
+          format: array
+          items:
+            type: string
+    GenericResponseCpeInformation:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/CpeInformation"
+        count:
+          type: integer
+          format: integer(int64)
+  securitySchemes:
+    userId:
+      type: apiKey
+      description: "(Required)"
+      name: userId
+      in: header
+    apiKey:
+      type: apiKey
+      description: "(Required)"
+      name: apiKey
+      in: header
+

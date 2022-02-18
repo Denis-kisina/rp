@@ -1,0 +1,865 @@
+---
+openapi: 3.0.1
+info:
+  title: CYR3CON_REFERENCE
+  version: '530'
+servers:
+- url: https://dev.apigargoyle.com
+security:
+- userId: []
+  apiKey: []
+paths:
+  "/v1/account/login":
+    post:
+      tags:
+      - REFERENCE
+      description: authorizes user and returns apiKey required in all other endpoints
+      operationId: Login
+      parameters:
+      - name: userId
+        in: header
+        description: User ID for the cyr3con
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: header
+        description: Password for the cyr3con.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LoginResponse"
+      security: []
+  "/v1/account/reset-password":
+    post:
+      tags:
+      - REFERENCE
+      operationId: Reset Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/InitResetPasswordRequestDto"
+        required: true
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/change-password":
+    post:
+      tags:
+      - REFERENCE
+      operationId: Change Password
+      parameters:
+      - name: oldPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: newPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: confirmPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/logout":
+    post:
+      tags:
+      - REFERENCE
+      operationId: Logout
+      parameters:
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LogoutStatus"
+      security: []
+  "/v1/users/ids/mappings":
+    get:
+      tags:
+      - REFERENCE
+      operationId: getUserIdMappings
+      parameters:
+      - name: oldUid
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: newUid
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: userId
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: userIntId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: userName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: forumsHash
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseUserIdMapping"
+      security: []
+  "/v1/users/mappings":
+    get:
+      tags:
+      - REFERENCE
+      operationId: getUserMappings
+      parameters:
+      - name: userId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: userName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseUserMapping"
+      security: []
+  "/v1/websites/forums/ids/mappings":
+    get:
+      tags:
+      - REFERENCE
+      operationId: getForumSiteIdMappings_1
+      parameters:
+      - name: forumsId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: forumsName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: networkType
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: order
+        in: query
+        description: Sorts the records according to the parameter.
+        required: false
+        schema:
+          type: string
+          default: last_access_time
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseForumSiteIdMapping"
+      security: []
+  "/v1/websites/ids/mappings":
+    get:
+      tags:
+      - REFERENCE
+      operationId: getForumSiteIdMappings
+      parameters:
+      - name: websiteName
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: websiteIntId
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: lastAccessTime
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: indicator
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: siteUrl
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: getCount
+        in: query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseWebsiteIdMappings"
+      security: []
+  "/v1/websites/marketplaces/ids/mappings":
+    get:
+      tags:
+      - REFERENCE
+      operationId: getMarketSiteIdMappings
+      parameters:
+      - name: marketPlaceId
+        in: query
+        description: ID of market place
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: marketPlaceName
+        in: query
+        description: Name of market place
+        required: false
+        schema:
+          type: string
+      - name: siteUrl
+        in: query
+        description: Site url of the market place
+        required: false
+        schema:
+          type: string
+      - name: getCount
+        in: query
+        description: To get the count of the query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseMarketSiteIdMapping"
+      security: []
+components:
+  schemas:
+    InitResetPasswordRequestDto:
+      required:
+      - userId
+      type: object
+      properties:
+        userId:
+          type: string
+          format: string
+    AccountActionStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LogoutStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LoginResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          format: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        userId:
+          type: string
+          format: string
+        roles:
+          type: array
+          format: array
+          items:
+            type: string
+        uiFeatures:
+          type: array
+          format: array
+          items:
+            type: string
+        apiKey:
+          type: string
+          format: string(uuid)
+        apiKeyCreatedOn:
+          type: string
+          format: string(date-time)
+        apiKeyExpiresOn:
+          type: string
+          format: string(date-time)
+        changePassword:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        twoFactor:
+          type: boolean
+          format: boolean
+        lastActivityTime:
+          type: string
+          format: string(date-time)
+        privacyPolicyAcceptanceRequired:
+          type: boolean
+          format: boolean
+    GenericResponseMarketSiteIdMapping:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/MarketSiteIdMapping"
+        count:
+          type: integer
+          format: integer(int64)
+    MarketSiteIdMapping:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+        marketPlaceId:
+          type: integer
+          format: integer(int32)
+        marketPlaceName:
+          type: string
+          format: string
+        firstSeen:
+          type: string
+          format: string(date)
+        lastAccessTime:
+          type: string
+          format: string(date)
+        siteUrl:
+          type: string
+          format: string
+        siteType:
+          type: string
+          format: string
+    GenericResponseWebsiteIdMappings:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/WebsiteIdMappings"
+        count:
+          type: integer
+          format: integer(int64)
+    WebsiteIdMapping:
+      type: object
+      properties:
+        websiteName:
+          type: string
+          format: string
+        websiteIntId:
+          type: integer
+          format: integer(int32)
+        networkType:
+          type: string
+          format: string
+        pageUrl:
+          type: string
+          format: string
+        firstAccessTime:
+          type: string
+          format: string(date)
+        lastAccessTime:
+          type: string
+          format: string(date)
+        indicator:
+          type: string
+          format: string
+    WebsiteIdMappings:
+      type: object
+      properties:
+        mappings:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/WebsiteIdMapping"
+        totalNumberOfUsers:
+          type: integer
+          format: integer(int64)
+        totalNumberOfVulnerabilityIds:
+          type: integer
+          format: integer(int64)
+        total:
+          type: integer
+          format: integer(int64)
+    ForumSiteIdMapping:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+        forumsId:
+          type: integer
+          format: integer(int32)
+        totalUsers:
+          type: integer
+          format: integer(int32)
+        forumsName:
+          type: string
+          format: string
+        firstSeen:
+          type: string
+          format: string(date)
+        lastAccessTime:
+          type: string
+          format: string(date)
+        btcAddress:
+          type: array
+          format: array
+          items:
+            type: string
+        pgpKey:
+          type: array
+          format: array
+          items:
+            type: string
+        totalVulnerabilityIds:
+          type: integer
+          format: integer(int32)
+        siteUrl:
+          type: string
+          format: string
+        networkType:
+          type: string
+          format: string
+    GenericResponseForumSiteIdMapping:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/ForumSiteIdMapping"
+        count:
+          type: integer
+          format: integer(int64)
+    GenericResponseUserMapping:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/UserMapping"
+        count:
+          type: integer
+          format: integer(int64)
+    UserMapping:
+      type: object
+      properties:
+        id:
+          type: string
+          format: string
+        userId:
+          type: integer
+          format: integer(int32)
+        userName:
+          type: string
+          format: string
+        websiteIdList:
+          type: array
+          format: array
+          items:
+            type: integer
+            format: int32
+        websiteNameList:
+          type: array
+          format: array
+          items:
+            type: string
+        btcAddressList:
+          type: array
+          format: array
+          items:
+            type: string
+        pgpKeyList:
+          type: array
+          format: array
+          items:
+            type: string
+        websiteCount:
+          type: integer
+          format: integer(int32)
+    GenericResponseUserIdMapping:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/UserIdMapping"
+        count:
+          type: integer
+          format: integer(int64)
+    UserIdMapping:
+      type: object
+      properties:
+        forumsId:
+          type: string
+          format: string
+        uid:
+          type: integer
+          format: integer(int32)
+        newUid:
+          type: string
+          format: string
+        userId:
+          type: integer
+          format: integer(int32)
+        userName:
+          type: string
+          format: string
+  securitySchemes:
+    userId:
+      type: apiKey
+      description: "(Required)"
+      name: userId
+      in: header
+    apiKey:
+      type: apiKey
+      description: "(Required)"
+      name: apiKey
+      in: header
+

@@ -1,0 +1,534 @@
+---
+openapi: 3.0.1
+info:
+  title: CYR3CON_SPIDER
+  version: '530'
+servers:
+- url: https://dev.apigargoyle.com
+security:
+- userId: []
+  apiKey: []
+paths:
+  "/v1/account/login":
+    post:
+      tags:
+      - SPIDER
+      description: authorizes user and returns apiKey required in all other endpoints
+      operationId: Login
+      parameters:
+      - name: userId
+        in: header
+        description: User ID for the cyr3con
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: header
+        description: Password for the cyr3con.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LoginResponse"
+      security: []
+  "/v1/account/reset-password":
+    post:
+      tags:
+      - SPIDER
+      operationId: Reset Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/InitResetPasswordRequestDto"
+        required: true
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/change-password":
+    post:
+      tags:
+      - SPIDER
+      operationId: Change Password
+      parameters:
+      - name: oldPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: newPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: confirmPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/logout":
+    post:
+      tags:
+      - SPIDER
+      operationId: Logout
+      parameters:
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LogoutStatus"
+      security: []
+  "/v1/spider-content":
+    get:
+      tags:
+      - SPIDER
+      description: searches spider content
+      operationId: Spider Content
+      parameters:
+      - name: keywords
+        in: query
+        description: a list of keywords to search
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseSpiderContent"
+      security: []
+  "/v1/spider-page":
+    get:
+      tags:
+      - SPIDER
+      description: searches spider pages
+      operationId: Spider Page
+      parameters:
+      - name: keywords
+        in: query
+        description: a list of keywords to search
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseSpiderPage"
+      security: []
+components:
+  schemas:
+    InitResetPasswordRequestDto:
+      required:
+      - userId
+      type: object
+      properties:
+        userId:
+          type: string
+          format: string
+    AccountActionStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LogoutStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LoginResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          format: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        userId:
+          type: string
+          format: string
+        roles:
+          type: array
+          format: array
+          items:
+            type: string
+        uiFeatures:
+          type: array
+          format: array
+          items:
+            type: string
+        apiKey:
+          type: string
+          format: string(uuid)
+        apiKeyCreatedOn:
+          type: string
+          format: string(date-time)
+        apiKeyExpiresOn:
+          type: string
+          format: string(date-time)
+        changePassword:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        twoFactor:
+          type: boolean
+          format: boolean
+        lastActivityTime:
+          type: string
+          format: string(date-time)
+        privacyPolicyAcceptanceRequired:
+          type: boolean
+          format: boolean
+    GenericResponseSpiderPage:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/SpiderPage"
+        count:
+          type: integer
+          format: integer(int64)
+    SpiderPage:
+      type: object
+      properties:
+        language:
+          type: string
+          description: Language in which page data is obtained
+          format: 'string :: Language in which page data is obtained'
+        url:
+          type: string
+          description: Url of the page from which content is crawled.
+          format: 'string :: Url of the page from which content is crawled.'
+        content:
+          type: string
+          description: Entire raw html page content.
+          format: 'string :: Entire raw html page content.'
+        timestampRetrieved:
+          type: string
+          description: Time when the content was retrieved
+          format: 'string(date) :: Time when the content was retrieved'
+        keywords:
+          type: array
+          description: List of keywords found in content encountered maximum times
+          format: 'array :: List of keywords found in content encountered maximum
+            times'
+          items:
+            type: string
+            description: List of keywords found in content encountered maximum times
+        vulnerabilityIds:
+          type: array
+          description: List of cve found crawling this page data.
+          format: 'array :: List of cve found crawling this page data.'
+          items:
+            type: string
+            description: List of cve found crawling this page data.
+        closestDate:
+          type: string
+          description: Closest date to the date found on page.By default end of calender
+            date.
+          format: 'string(date) :: Closest date to the date found on page.By default
+            end of calender date.'
+        score:
+          type: number
+          description: Calculated score to check relevance of content.
+          format: 'number :: Calculated score to check relevance of content.'
+    Entity:
+      type: object
+      properties:
+        endingPos:
+          type: integer
+          description: Ending position of relevant keyword or URL
+          format: 'integer(int32) :: Ending position of relevant keyword or URL'
+        matchingTokens:
+          type: array
+          description: Token number of matching keyword or URL from start of content.
+          format: 'array :: Token number of matching keyword or URL from start of
+            content.'
+          items:
+            type: integer
+            description: Token number of matching keyword or URL from start of content.
+            format: int32
+        relevanceScore:
+          type: integer
+          description: Score calculated to check relevance of content with URL and
+            keywords.
+          format: 'integer(int32) :: Score calculated to check relevance of content
+            with URL and keywords.'
+        entityEnglishId:
+          type: string
+          description: Matching entity in english
+          format: 'string :: Matching entity in english'
+        confidenceScore:
+          type: number
+          description: Confidence level of score.
+          format: 'number :: Confidence level of score.'
+        entityId:
+          type: string
+          description: Recorded Entity
+          format: 'string :: Recorded Entity'
+        id:
+          type: integer
+          description: Id of the match in list of entities.
+          format: 'integer(int32) :: Id of the match in list of entities.'
+        matchedText:
+          type: string
+          description: Matching text of the Recorded entity.
+          format: 'string :: Matching text of the Recorded entity.'
+      description: List of entities with details of each relevant keywords and URL
+    GenericResponseSpiderContent:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/SpiderContent"
+        count:
+          type: integer
+          format: integer(int64)
+    SpiderContent:
+      type: object
+      properties:
+        language:
+          type: string
+          description: Language in which page data is obtained
+          format: 'string :: Language in which page data is obtained'
+        url:
+          type: string
+          description: Url of the page from which content is crawled.
+          format: 'string :: Url of the page from which content is crawled.'
+        content:
+          type: string
+          description: content of page with urls in it
+          format: 'string :: content of page with urls in it'
+        entity:
+          type: array
+          description: List of entities with details of each relevant keywords and
+            URL
+          format: 'array :: List of entities with details of each relevant keywords
+            and URL'
+          items:
+            "$ref": "#/components/schemas/Entity"
+        keywords:
+          type: array
+          description: related keywords
+          format: 'array :: related keywords'
+          items:
+            type: string
+            description: related keywords
+        vulnerabilityIds:
+          type: array
+          description: List of cve found parsing this content data.
+          format: 'array :: List of cve found parsing this content data.'
+          items:
+            type: string
+            description: List of cve found parsing this content data.
+        closestDate:
+          type: string
+          description: Closest date to the date found on page. By default end of calender
+            date.
+          format: 'string(date) :: Closest date to the date found on page. By default
+            end of calender date.'
+        score:
+          type: number
+          description: Calculated score to check relevance of content.
+          format: 'number :: Calculated score to check relevance of content.'
+  securitySchemes:
+    userId:
+      type: apiKey
+      description: "(Required)"
+      name: userId
+      in: header
+    apiKey:
+      type: apiKey
+      description: "(Required)"
+      name: apiKey
+      in: header
+

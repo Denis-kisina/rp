@@ -11,7 +11,7 @@ info:
   version: 1.0.0
   description: >
     # Introduction
-    
+
     ## API Categories
 
     Below is how these APIs are arranged
@@ -23,185 +23,169 @@ info:
     Below is the list of supported operations
 
     # Authentication
-  
+
     Gargoyle offers two forms of authentication:
       
-      - Basic HTTP Authentocation
+      - Basic HTTP Authentication
       - API Key
+
 paths:
   /v1/account/login:
-    post:
-      summary: LOGIN
-      description: >-
-        Use API credentials to log into the API
-      parameters:
-        - in: header
-          name: userId
-          schema:
-            type: string
-            example: denis
-          required: true
-          description: User ID
-        - in: header
-          name: password
-          schema:
-            type: string
-            example: password
-          required: true
-          description: User password
-      responses:
-        '200':
-          description: Return a 200 status to indicate that the data was received successfully
-  /docs:
-    get:
-      summary: DOCS
-      description: Return all general APIs
-      parameters:
-        - in: header
-          name: userId
-          schema:
-            type: string
-            example: denis
-          required: true
-          description: ID of the user
-        - in: header
-          name: apiKey
-          schema:
-            type: string
-            format: uuid
-            example: 00000000-0000-0000-0000-000000000001
-          required: false
-          description: API Key of the user
-          responses:
-            '200':
-              description: Return a 200 status to indicate that the data was received successfully
-  /docs/diligence:
-    get:
-      summary: DILIGENCE API
-      description: Return all general APIs
-      parameters:
-        - in: header
-          name: userId
-          schema:
-            type: string
-            example: denis
-          required: true
-          description: ID of the user
-        - in: header
-          name: apiKey
-          schema:
-            type: string
-            format: uuid
-            example: 00000000-0000-0000-0000-000000000001
-          required: false
-          description: API Key of the user
-          responses:
-            '200':
-              description: Return a 200 status to indicate that the data was received successfully
-  /docs/forecast:
-    get:
-      summary: FORECAST API
-      description: Return all general APIs
-      parameters:
-        - in: header
-          name: userId
-          schema:
-            type: string
-            example: denis
-          required: true
-          description: ID of the user
-        - in: header
-          name: apiKey
-          schema:
-            type: string
-            format: uuid
-            example: 00000000-0000-0000-0000-000000000001
-          required: false
-          description: API Key of the user
-          responses:
-            '200':
-              description: Return a 200 status to indicate that the data was received successfully
-  /v1/software-cpe/mappings/files:
-    post:
-      summary: /v1/software-cpe/mappings/files
-      description: Sending data using `multipart/form-data`
-      parameters:
-        - in: parameter
-          name: from
-          schema:
-            type: string
-            format: date
-            example: 2021-01-30
-          required: false
-          description: Date from which records needs to be fetched.
-        - in: parameter
-          name: to
-          schema:
-            type: string
-            format: date
-            example: 2021-01-30
-        - in: header
-          name: userId
-          schema:
-            type: string
-            example: denis
-          required: true
-          description: ID of the user
-        - in: header
-          name: apiKey
-          schema:
-            type: string
-            format: uuid
-            example: 00000000-0000-0000-0000-000000000001
-          required: false
-          description: API Key of the user
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  format: binary
-          required: false
-          description: Date to which records needs to be fetched.
-          responses:
-            '200':
-              description: Return a 200 status to indicate that the data was received successfully
-      security:
-        - http-basic: []
-        - api_key: []
-components:
-  securitySchemes:
-    http-basic:
-      type: http
-      scheme: basic
-    http-bearer:
-      type: http
-      scheme: bearer
-    api_key:
-      type: apiKey
-      name: apiKey
-      in: header
-schemas:
-    SoftwareCpeCveMappingsSearchCriteria:
-      type: object
-      properties:
-        from:
-          type: localDate
-          required: true
-          description: Date from which records needs to be fetched.
-          example: 10
-          format: date
-        to:
-          type: localDate
-          description: Date till which records needs to be fetched.
-          examples: 10
-    MultipartFileRequestDto:
-      type: object
-      properties:
-        file:
-          type:  string
-          format: binary
-          required: true
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1account~1login
+  /v1/account/reset-password:
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1account~1reset-password
+  /v1/account/change-password:
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1account~1change-password
+  /v1/account/logout:
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1account~1logout
+
+  /v1/analysis/forums/statistics:
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1analysis~1forums~1statistics
+  /v1/analysis/marketplaces/statistics:
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1analysis~1marketplaces~1statistics
+  /v1/analysis/users/activities: 
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1analysis~1users~1activities
+  /v1/analysis/users/posts: 
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1analysis~1users~1posts
+  /v1/analysis/ips: 
+    $ref: CYR3CON_SUSPICIOUS.yaml#/paths/~1v1~1analysis~1ips
+  /v1/analysis/ips/addresses: 
+    $ref: CYR3CON_SUSPICIOUS.yaml#/paths/~1v1~1analysis~1ips~1addresses
+
+  /v1/cpe-to-cves/mappings: 
+    $ref: CYR3CON_FORECAST.yaml#/paths/~1v1~1cpe-to-cves~1mappings
+  /v1/cve-to-cves/mappings: 
+    $ref: CYR3CON_FORECAST.yaml#/paths/~1v1~1cve-to-cpes~1mappings
+  /v1/cves/{cve}/msbs/mappings:
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1cves~1{cve}~1msbs~1mappings
+
+  /v1/data-leaks: 
+    $ref: CYR3CON_MALWARE.yaml#/paths/~1v1~1data-leaks
+  /v1/data-leaks/files: 
+    $ref: CYR3CON_MALWARE.yaml#/paths/~1v1~1data-leaks~1files
+
+  /v1/dumps-s3/files: 
+    $ref: CYR3CON_MALWARE.yaml#/paths/~1v1~1dumps-s3~1files
+  /v1/dumps-s3/mappings: 
+    $ref: CYR3CON_MALWARE.yaml#/paths/~1v1~1dumps-s3~1mappings
+
+  /v1/entities: 
+    $ref: CYR3CON_FORECAST.yaml#/paths/~1v1~1entities
+  /v1/entities/tags: 
+    $ref: CYR3CON_FORECAST.yaml#/paths/~1v1~1entities~1tags
+
+  /v1/f0recast-rules: 
+    $ref: CYR3CON_FORECAST.yaml#/paths/~1v1~1f0recast-rules
+  /v1/financial-institutes: 
+    $ref: CYR3CON_FORECAST.yaml#/paths/~1v1~1financial-institutes
+  /v1/fortify: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1fortify
+
+  /v1/hacking/items: 
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1hacking~1items
+  /v1/hacking/posts: 
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1hacking~1posts
+  /v1/hacking/threads: 
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1hacking~1threads
+  /v1/hacking/threads/{threadId}: 
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1hacking~1threads~1{threadId}
+  /v1/hacking/threads/{threadId}/posts: 
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1hacking~1threads~1{threadId}~1posts
+  /v1/hacking/threads/{threadId}/posts/{postId}/context: 
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1hacking~1threads~1{threadId}~1posts~1{postId}~1context
+  /v1/hacking/threads/{threadId}/posts/{postId}/location: 
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1hacking~1threads~1{threadId}~1posts~1{postId}~1location
+
+  /v1/indicator-aggregations: 
+    $ref: CYR3CON_FORECAST.yaml#/paths/~1v1~1indicator-aggregations
+
+  /v1/metrics/cwe-cve: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1metrics~1cwe-cve
+  /v1/mitre/tactics-to-cves/mappings: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1mitre~1tactics-to-cves~1mappings
+  /v1/mitre/techniques-to-cves/mappings: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1mitre~1techniques-to-cves~1mappings
+  /v1/msbs/{msb}/cves/mappings: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1msbs~1{msb}~1cves~1mappings
+
+  /v1/networks/users/{userId}:
+    $ref: CYR3CON_NETWORKS.yaml#/paths/~1v1~1networks~1users~1{userId}
+  /v1/networks/users/{userId}/forums:
+    $ref: CYR3CON_NETWORKS.yaml#/paths/~1v1~1networks~1users~1{userId}~1forums
+  /v1/networks/users/{userId}/marketplaces:
+    $ref: CYR3CON_NETWORKS.yaml#/paths/~1v1~1networks~1users~1{userId}~1marketplaces
+  /v1/networks/websites/{websiteId}:
+    $ref: CYR3CON_NETWORKS.yaml#/paths/~1v1~1networks~1websites~1{websiteId}
+  /v1/networks/websites/{websiteId}/users/{userId}:
+    $ref: CYR3CON_NETWORKS.yaml#/paths/~1v1~1networks~1websites~1{websiteId}~1users~1{userId}
+
+  /v1/records/social-media: 
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1records~1social-media
+  /v1/records/websites/rapid7: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1records~1websites~1rapid7
+  /v1/records/websites/symantec: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1records~1websites~1symantec
+  /v1/recrods/phishing: 
+    $ref: CYR3CON_SUSPICIOUS.yaml#/paths/~1v1~1records~1phishing
+
+  /v1/software-cpe: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1software-cpe
+  /v1/software-cpe/mappings/files: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1software-cpe~1mappings~1files
+  /v1/spider-content: 
+    $ref: CYR3CON_SPIDER.yaml#/paths/~1v1~1spider-content
+  /v1/spider-page: 
+    $ref: CYR3CON_SPIDER.yaml#/paths/~1v1~1spider-page
+
+  /v1/tagged/content: 
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1tagged~1content
+  /v1/tagged/combinations: 
+    $ref: CYR3CON_FORECAST.yaml#/paths/~1v1~1tagged~1combinations
+  /v1/tagged/financial: 
+    $ref: CYR3CON_FORECAST.yaml#/paths/~1v1~1tagged~1financial
+  /v1/tagged/software: 
+    $ref: CYR3CON_FORECAST.yaml#/paths/~1v1~1tagged~1software
+  /v1/tagged/software/tags: 
+    $ref: CYR3CON_FORECAST.yaml#/paths/~1v1~1tagged~1software~1tags
+
+  /v1/users/ids/mappings: 
+    $ref: CYR3CON_REFERENCE.yaml#/paths/~1v1~1users~1ids~1mappings
+  /v1/users/mappings: 
+    $ref: CYR3CON_REFERENCE.yaml#/paths/~1v1~1users~1mappings
+
+  /v1/vendor-products:
+    $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1vendor-products
+  /v1/vpn-info: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1vpn-info
+  /v1/vulnerabilities/essentials: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1vulnerabilities~1essentials
+  /v1/vulnerabilities/info: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1vulnerabilities~1info
+  /v1/vulnerabilities/info/cves-by-cyrating: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1vulnerabilities~1info~1cves-by-cyrating
+  /v1/vulnerabilities/rankings: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1vulnerabilities~1rankings
+  /v1/vulnerabilities/rankings/cves/metadata: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1vulnerabilities~1rankings~1cves~1metadata
+  /v1/vulnerabilities/rankings/low-base-score: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1vulnerabilities~1rankings~1low-base-score
+  /v1/vulnerabilities/rankings/recent: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1vulnerabilities~1rankings~1recent
+  /v1/vulnerabilities/rankings/top: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1vulnerabilities~1rankings~1top
+  /v1/vulnerabilities/rankings/{vulnerabilityId}/timeline: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1vulnerabilities~1rankings~1{vulnerabilityId}~1timeline
+  /v1/vulnerabilities/statistics: 
+    $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1vulnerabilities~1statistics
+
+  /v1/websites/forums/btc/ids/mappings: 
+   $ref: CYR3CON_D1LIGENCE.yaml#/paths/~1v1~1websites~1forums~1btc~1ids~1mappings
+  /v1/websites/forums/ids/mappings: 
+   $ref: CYR3CON_REFERENCE.yaml#/paths/~1v1~1websites~1forums~1ids~1mappings
+  /v1/websites/ids/mappings: 
+   $ref: CYR3CON_REFERENCE.yaml#/paths/~1v1~1websites~1ids~1mappings
+  /v1/websites/marketplaces/ids/mappings: 
+   $ref: CYR3CON_REFERENCE.yaml#/paths/~1v1~1websites~1marketplaces~1ids~1mappings
+
+  /v1/zeroday-products: 
+   $ref: CYR3CON_PR1ORITY.yaml#/paths/~1v1~1zeroday-products

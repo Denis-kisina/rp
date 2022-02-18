@@ -1,0 +1,717 @@
+---
+openapi: 3.0.1
+info:
+  title: CYR3CON_SUSPICIOUS
+  version: '530'
+servers:
+- url: https://dev.apigargoyle.com
+security:
+- userId: []
+  apiKey: []
+paths:
+  "/v1/account/login":
+    post:
+      tags:
+      - SUSPICIOUS
+      description: authorizes user and returns apiKey required in all other endpoints
+      operationId: Login
+      parameters:
+      - name: userId
+        in: header
+        description: User ID for the cyr3con
+        required: true
+        schema:
+          type: string
+      - name: password
+        in: header
+        description: Password for the cyr3con.
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LoginResponse"
+      security: []
+  "/v1/account/reset-password":
+    post:
+      tags:
+      - SUSPICIOUS
+      operationId: Reset Password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/InitResetPasswordRequestDto"
+        required: true
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/change-password":
+    post:
+      tags:
+      - SUSPICIOUS
+      operationId: Change Password
+      parameters:
+      - name: oldPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: newPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: confirmPassword
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountActionStatus"
+      security: []
+  "/v1/account/logout":
+    post:
+      tags:
+      - SUSPICIOUS
+      operationId: Logout
+      parameters:
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LogoutStatus"
+      security: []
+  "/v1/analysis/ips":
+    get:
+      tags:
+      - SUSPICIOUS
+      operationId: IP Analysis
+      parameters:
+      - name: websiteIntId
+        in: query
+        description: Id of the website where post is made by user.
+        required: false
+        schema:
+          type: string
+      - name: contentId
+        in: query
+        description: Id of the content posted by user.
+        required: false
+        schema:
+          type: string
+      - name: userIntId
+        in: query
+        description: Id of user.
+        required: false
+        schema:
+          type: integer
+          format: int32
+      - name: port
+        in: query
+        required: false
+        schema:
+          type: string
+      - name: language
+        in: query
+        description: Language in which content is posted.
+        required: false
+        schema:
+          type: string
+      - name: softwareTags
+        in: query
+        description: Retrieves results which are associated with given software tags.
+        required: false
+        schema:
+          type: string
+      - name: ipAddresses
+        in: query
+        description: Ip address of user who posted.
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+      - name: content
+        in: query
+        description: Content posted by the user.
+        required: false
+        schema:
+          type: string
+      - name: from
+        in: query
+        description: Start date from which results are to be retrieved.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: End date until which results are retrieved.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: getCount
+        in: query
+        description: Gets the count of results if set to True.
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseIpInformation"
+      security: []
+  "/v1/analysis/ips/addresses":
+    get:
+      tags:
+      - SUSPICIOUS
+      operationId: getIpAddresses
+      parameters:
+      - name: getCount
+        in: query
+        description: Gets the count of results if set to True.
+        required: false
+        schema:
+          type: boolean
+      - name: from
+        in: query
+        description: Start date from which results are to be retrieved.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: End date until which results are retrieved.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 100
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponseIpAddresses"
+      security: []
+  "/v1/records/phishing":
+    get:
+      tags:
+      - SUSPICIOUS
+      description: To get a list of phishing posts.
+      operationId: Phishing Data
+      parameters:
+      - name: from
+        in: query
+        description: Date from which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: to
+        in: query
+        description: Date till which records needs to be fetched.
+        required: false
+        schema:
+          type: string
+          format: date
+      - name: url
+        in: query
+        description: Returns all the records with given phishUrl.
+        required: false
+        schema:
+          type: string
+      - name: getCount
+        in: query
+        description: To get the count of the query
+        required: false
+        schema:
+          type: boolean
+      - name: start
+        in: query
+        description: Start record for results to be retrieved.
+        required: true
+        schema:
+          minimum: 0
+          type: integer
+          default: 0
+      - name: limit
+        in: query
+        description: Number of records to be retrieved.
+        required: false
+        schema:
+          maximum: 5000
+          minimum: 1
+          type: integer
+          default: 10
+      - name: userId
+        in: header
+        required: true
+        schema:
+          type: string
+      - name: apiKey
+        in: header
+        required: true
+        schema:
+          type: uuid
+      responses:
+        '200':
+          description: successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/GenericResponsePhishingData"
+      security: []
+components:
+  schemas:
+    InitResetPasswordRequestDto:
+      required:
+      - userId
+      type: object
+      properties:
+        userId:
+          type: string
+          format: string
+    AccountActionStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LogoutStatus:
+      type: object
+      properties:
+        message:
+          type: string
+          format: string
+    LoginResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          format: string
+          enum:
+          - 100 CONTINUE
+          - 101 SWITCHING_PROTOCOLS
+          - 102 PROCESSING
+          - 103 CHECKPOINT
+          - 200 OK
+          - 201 CREATED
+          - 202 ACCEPTED
+          - 203 NON_AUTHORITATIVE_INFORMATION
+          - 204 NO_CONTENT
+          - 205 RESET_CONTENT
+          - 206 PARTIAL_CONTENT
+          - 207 MULTI_STATUS
+          - 208 ALREADY_REPORTED
+          - 226 IM_USED
+          - 300 MULTIPLE_CHOICES
+          - 301 MOVED_PERMANENTLY
+          - 302 FOUND
+          - 302 MOVED_TEMPORARILY
+          - 303 SEE_OTHER
+          - 304 NOT_MODIFIED
+          - 305 USE_PROXY
+          - 307 TEMPORARY_REDIRECT
+          - 308 PERMANENT_REDIRECT
+          - 400 BAD_REQUEST
+          - 401 UNAUTHORIZED
+          - 402 PAYMENT_REQUIRED
+          - 403 FORBIDDEN
+          - 404 NOT_FOUND
+          - 405 METHOD_NOT_ALLOWED
+          - 406 NOT_ACCEPTABLE
+          - 407 PROXY_AUTHENTICATION_REQUIRED
+          - 408 REQUEST_TIMEOUT
+          - 409 CONFLICT
+          - 410 GONE
+          - 411 LENGTH_REQUIRED
+          - 412 PRECONDITION_FAILED
+          - 413 PAYLOAD_TOO_LARGE
+          - 413 REQUEST_ENTITY_TOO_LARGE
+          - 414 URI_TOO_LONG
+          - 414 REQUEST_URI_TOO_LONG
+          - 415 UNSUPPORTED_MEDIA_TYPE
+          - 416 REQUESTED_RANGE_NOT_SATISFIABLE
+          - 417 EXPECTATION_FAILED
+          - 418 I_AM_A_TEAPOT
+          - 419 INSUFFICIENT_SPACE_ON_RESOURCE
+          - 420 METHOD_FAILURE
+          - 421 DESTINATION_LOCKED
+          - 422 UNPROCESSABLE_ENTITY
+          - 423 LOCKED
+          - 424 FAILED_DEPENDENCY
+          - 425 TOO_EARLY
+          - 426 UPGRADE_REQUIRED
+          - 428 PRECONDITION_REQUIRED
+          - 429 TOO_MANY_REQUESTS
+          - 431 REQUEST_HEADER_FIELDS_TOO_LARGE
+          - 451 UNAVAILABLE_FOR_LEGAL_REASONS
+          - 500 INTERNAL_SERVER_ERROR
+          - 501 NOT_IMPLEMENTED
+          - 502 BAD_GATEWAY
+          - 503 SERVICE_UNAVAILABLE
+          - 504 GATEWAY_TIMEOUT
+          - 505 HTTP_VERSION_NOT_SUPPORTED
+          - 506 VARIANT_ALSO_NEGOTIATES
+          - 507 INSUFFICIENT_STORAGE
+          - 508 LOOP_DETECTED
+          - 509 BANDWIDTH_LIMIT_EXCEEDED
+          - 510 NOT_EXTENDED
+          - 511 NETWORK_AUTHENTICATION_REQUIRED
+        userId:
+          type: string
+          format: string
+        roles:
+          type: array
+          format: array
+          items:
+            type: string
+        uiFeatures:
+          type: array
+          format: array
+          items:
+            type: string
+        apiKey:
+          type: string
+          format: string(uuid)
+        apiKeyCreatedOn:
+          type: string
+          format: string(date-time)
+        apiKeyExpiresOn:
+          type: string
+          format: string(date-time)
+        changePassword:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        twoFactor:
+          type: boolean
+          format: boolean
+        lastActivityTime:
+          type: string
+          format: string(date-time)
+        privacyPolicyAcceptanceRequired:
+          type: boolean
+          format: boolean
+    GenericResponsePhishingData:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/PhishingData"
+        count:
+          type: integer
+          format: integer(int64)
+    PhishingData:
+      type: object
+      properties:
+        phishID:
+          type: integer
+          description: Phishing ID.
+          format: 'integer(int64) :: Phishing ID.'
+        phishUrl:
+          type: string
+          description: Website URL where this phishing originated
+          format: 'string :: Website URL where this phishing originated'
+        urls:
+          type: array
+          description: List of urls
+          format: 'array :: List of urls'
+          items:
+            type: string
+            description: List of urls
+        phishDetailUrl:
+          type: string
+          description: Website URL where details regarding this phishing ID can be
+            found.
+          format: 'string :: Website URL where details regarding this phishing ID
+            can be found.'
+        submissionDate:
+          type: string
+          description: Date when the phishing was reported
+          format: 'string :: Date when the phishing was reported'
+        submissionTime:
+          type: string
+          description: Time when the phishing was reported
+          format: 'string :: Time when the phishing was reported'
+        verified:
+          type: string
+          description: Boolean value if this reported phishing is verified
+          format: 'string :: Boolean value if this reported phishing is verified'
+        verificationDate:
+          type: string
+          description: Date when the reported phishing was verified
+          format: 'string :: Date when the reported phishing was verified'
+        verificationTime:
+          type: string
+          description: Time when the reported phishing was verified
+          format: 'string :: Time when the reported phishing was verified'
+        online:
+          type: string
+          description: Is this phishing reported to take place online
+          format: 'string :: Is this phishing reported to take place online'
+        target:
+          type: string
+          description: Intended target for phishing. "Other" if target is not specific.
+          format: 'string :: Intended target for phishing. "Other" if target is not
+            specific.'
+        details:
+          type: array
+          description: List of details if found for this phishing ID
+          format: 'array :: List of details if found for this phishing ID'
+          items:
+            "$ref": "#/components/schemas/PhishingDetails"
+        recordSource:
+          type: string
+          format: string
+    PhishingDetails:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+          description: IP address of the affected nodes.
+          format: 'string :: IP address of the affected nodes.'
+        cidrBlock:
+          type: string
+          format: string
+        announcingNetwork:
+          type: string
+          format: string
+        rir:
+          type: string
+          format: string
+        country:
+          type: string
+          description: Country where the phishing reported
+          format: 'string :: Country where the phishing reported'
+        detailDate:
+          type: string
+          description: Date listed on the post containing details
+          format: 'string :: Date listed on the post containing details'
+        detailTime:
+          type: string
+          description: Time listed on the post containing details
+          format: 'string :: Time listed on the post containing details'
+      description: List of details if found for this phishing ID
+    GenericResponseIpInformation:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/IpInformation"
+        count:
+          type: integer
+          format: integer(int64)
+    IpAnalysisItem:
+      type: object
+      properties:
+        ipAddress:
+          type: string
+          description: Ip address which is found in content and analyzed
+          format: 'string :: Ip address which is found in content and analyzed'
+        contentIpId:
+          type: string
+          description: Unique identifier made from content appended with IP that is
+            analyzed.
+          format: 'string :: Unique identifier made from content appended with IP
+            that is analyzed.'
+        port:
+          type: string
+          description: Port number obtained from content.
+          format: 'string :: Port number obtained from content.'
+      description: list of IP analysis
+    IpInformation:
+      type: object
+      properties:
+        softwareTags:
+          type: array
+          description: List of software tags.
+          format: 'array :: List of software tags.'
+          items:
+            type: string
+            description: List of software tags.
+        postedDate:
+          type: string
+          description: Date when the post was posted.
+          format: 'string(date) :: Date when the post was posted.'
+        websiteIntId:
+          type: string
+          format: string
+        contentId:
+          type: string
+          description: record Id of the post content.
+          format: 'string :: record Id of the post content.'
+        userIntId:
+          type: integer
+          description: Id of user.
+          format: 'integer(int32) :: Id of user.'
+        language:
+          type: string
+          format: string
+        content:
+          type: string
+          description: Post content
+          format: 'string :: Post content'
+        ipAnalysis:
+          type: array
+          description: list of IP analysis
+          format: 'array :: list of IP analysis'
+          items:
+            "$ref": "#/components/schemas/IpAnalysisItem"
+    GenericResponseIpAddresses:
+      type: object
+      properties:
+        type:
+          type: string
+          format: string
+        message:
+          type: string
+          format: string
+        results:
+          type: array
+          format: array
+          items:
+            "$ref": "#/components/schemas/IpAddresses"
+        count:
+          type: integer
+          format: integer(int64)
+    IpAddresses:
+      type: object
+      properties:
+        ipAnalysis:
+          type: array
+          format: array
+          items:
+            type: object
+            additionalProperties:
+              type: string
+        postedDate:
+          type: string
+          format: string(date)
+  securitySchemes:
+    userId:
+      type: apiKey
+      description: "(Required)"
+      name: userId
+      in: header
+    apiKey:
+      type: apiKey
+      description: "(Required)"
+      name: apiKey
+      in: header
+
