@@ -2,9 +2,7 @@
 openapi: 3.0.1
 info:
   title: CYR3CON_SUSPICIOUS
-  version: '530'
-servers:
-- url: https://dev.apigargoyle.com
+
 security:
 - userId: []
   apiKey: []
