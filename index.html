@@ -6,7 +6,7 @@
     <script type="module" src="https://unpkg.com/rapidoc/dist/rapidoc-min.js" async></script>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;600&family=Roboto+Mono&display=swap" rel="stylesheet"/>
     <style>
-      @import url("/src/styles/styles.css");
+      @import url("/src/style\ sheets/styles.css");
     </style>
   </head>
 
@@ -23,6 +23,10 @@
       show-header="false"
       allow-authentication="false"
       use-path-in-nav-bar="true"
-    > </rapi-doc>
+    > 
+    <div slot="nav-logo" style="display: flex; align-items: center; justify-content: center;"> 
+      <img src = "/src/images/logo1.webp" style="width:15em; margin-right: 20px; background-color: azure;">
+    </div>
+  </rapi-doc>
   </body>
 </html>

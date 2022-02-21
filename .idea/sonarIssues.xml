@@ -3,6 +3,11 @@
   <component name="issues">
     <option name="index">
       <map>
+        <entry key="/Dummy.txt">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/../IdeaProjects/gargoyl3-api/src/main/java/ai/cyr3con/gargoyl3/api/vulnerability/info/VulnerabilityInfo.java">
           <value>
             <set />

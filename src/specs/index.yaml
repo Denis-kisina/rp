@@ -1,14 +1,15 @@
 openapi: 3.0.1
 servers:
-  - url: https://apigargoyle.com
+  - url: https://dev.apigargoyle.com
     description: Default server
 info:
+  version: 1.0.0  
   title: Gargoyle API
   contact:
     name: Customer Support
     url: https://www.cyr3con-screen.com
     email: support@cybersecurityworks.com
-  version: 1.0.0
+  
   description: >
     # Introduction
 
