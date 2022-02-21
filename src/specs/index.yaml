@@ -1,7 +1,10 @@
 openapi: 3.0.1
 servers:
   - url: https://dev.apigargoyle.com
-    description: Default server
+    description: Dev server
+    
+  - url: https://apigargoyle.com
+    description: Prod server
 info:
   version: 1.0.0  
   title: Gargoyle API
@@ -9,13 +12,13 @@ info:
     name: Customer Support
     url: https://www.cybersecurityworks.com
     email: support@cybersecurityworks.com
-  
+  termsOfService:
   description: >
     # Introduction
 
     ## API Categories
 
-    Below are the different roles that access the API resources
+    Below are the different roles that access the API resources.
 
       - D1LIGENCE
       - FORECAST
@@ -28,7 +31,7 @@ info:
 
     ## API Operations
 
-    Following is the list of supported operations
+    Following is the list of supported operations.
 
     ### Account Operations
 
@@ -38,7 +41,7 @@ info:
 
     # Authentication
 
-    Gargoyle offers two forms of authentication:
+    The API offers two forms of authentication.
       
       - Basic HTTP Authentication
       - API Key
