@@ -7,7 +7,7 @@ info:
   title: Gargoyle API
   contact:
     name: Customer Support
-    url: https://www.cyr3con-screen.com
+    url: https://www.cybersecurityworks.com
     email: support@cybersecurityworks.com
   
   description: >
@@ -28,13 +28,13 @@ info:
 
     ## API Operations
 
+    Following is the list of supported operations
+
     ### Account Operations
 
       - User account login operation
       - User account password reset operation
       - User account password change operation 
-
-    Below is the list of supported operations
 
     # Authentication
 
