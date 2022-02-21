@@ -15,11 +15,24 @@ info:
 
     ## API Categories
 
-    Below is how these APIs are arranged
+    Below are the different roles to access the different APIs
+
+      - D1LIGENCE
+      - FORECAST
+      - MALWARE
+      - NETWORKS
+      - PR1ORITY
+      - REFERENCE
+      - SPIDER
+      - SUSPICIOUS
 
     ## API Operations
 
     ### Account Operations
+
+      - User account login operation
+      - User account password reset operation
+      - User account password change operation 
 
     Below is the list of supported operations
 
